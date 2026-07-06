@@ -1,7 +1,7 @@
 {
   "name": "ticket-check-bro",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "Intelligent Document Intelligence Platform — parse invoices, receipts, and financial documents in-browser. Upload PDFs & images, extract structured fields, export to spreadsheet. Zero-server, fully client-side.",
   "keywords": [
