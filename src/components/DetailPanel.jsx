@@ -1,14 +1,28 @@
+import { useState } from 'react'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { getFieldSchema, DOCUMENT_TYPES } from '../data/schemas.js'
-import { formatFieldValue } from '../utils/formatHelper.js'
 import InvoiceCard from './InvoiceCard.jsx'
 import PreviewPanel from './PreviewPanel.jsx'
-import { FileSearch } from 'lucide-react'
+import parserFactory from '../core/parser/index.js'
+import { FileSearch, AlertTriangle } from 'lucide-react'
+
+const TYPE_OPTIONS = [
+  { id: 'common_invoice', label: 'Value-Added Tax Invoice' },
+  { id: 'train_ticket', label: 'Train Ticket' },
+  { id: 'flight_ticket', label: 'Flight Itinerary' },
+  { id: 'vehicle_invoice', label: 'Vehicle Invoice' },
+  { id: 'taxi_invoice', label: 'Taxi Receipt' },
+  { id: 'fixed_amount', label: 'Fixed-Amount Receipt' },
+  { id: 'toll_invoice', label: 'Toll Invoice' }
+]
 
 export default function DetailPanel() {
   const selectedUid = useInvoiceStore(s => s.selectedUid)
   const entries = useInvoiceStore(s => s.entries)
   const results = useInvoiceStore(s => s.results)
+  const setDocumentType = useInvoiceStore(s => s.setDocumentType)
+
+  const [typeSelecting, setTypeSelecting] = useState(false)
 
   const entry = entries.find(e => e.uid === selectedUid)
   const result = selectedUid ? results[selectedUid] : null
@@ -23,8 +37,17 @@ export default function DetailPanel() {
   }
 
   const documentType = result?.documentType || 'unknown'
-  const typeInfo = DOCUMENT_TYPES[documentType] || { label: result?.documentLabel || 'Unknown' }
+  const typeInfo = DOCUMENT_TYPES[documentType] || { label: result?.documentLabel || 'Unknown Document' }
   const schema = getFieldSchema(documentType)
+  const needsTypeSelection = !result || result.confidence < 0.4 || documentType === 'unknown'
+
+  const handleTypeChange = (typeId) => {
+    const parsed = parserFactory.parseWithType(result.rawText || '', typeId)
+    if (parsed) {
+      setDocumentType(selectedUid, typeId, parsed)
+    }
+    setTypeSelecting(false)
+  }
 
   return (
     <div className="detail-panel">
@@ -39,6 +62,24 @@ export default function DetailPanel() {
           )}
         </div>
       </div>
+
+      {needsTypeSelection && result && (
+        <div className="type-selector-bar">
+          <AlertTriangle size="14" />
+          <span>Auto-detection was uncertain. Select the correct document type:</span>
+          <select
+            className="type-select"
+            value={documentType}
+            onChange={(e) => handleTypeChange(e.target.value)}
+          >
+            <option value="" disabled>Choose type...</option>
+            {TYPE_OPTIONS.map(t => (
+              <option key={t.id} value={t.id}>{t.label}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="detail-body">
         <PreviewPanel file={entry} />
         {result && <InvoiceCard fields={result.fields} schema={schema} uid={selectedUid} />}
@@ -97,6 +138,32 @@ export default function DetailPanel() {
         .detail-confidence.high { background: #E8F5E9; color: #2E7D32; }
         .detail-confidence.medium { background: #FFF3E0; color: #E65100; }
         .detail-confidence.low { background: #FFEBEE; color: #C62828; }
+
+        .type-selector-bar {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 16px;
+          background: #FFF8E1;
+          border-bottom: 1px solid #FFE082;
+          font-size: 12px;
+          color: #F57F17;
+          flex-wrap: wrap;
+        }
+        .type-select {
+          padding: 4px 8px;
+          border: 1px solid #FFE082;
+          border-radius: var(--radius-sm);
+          background: #fff;
+          font-size: 12px;
+          color: var(--text-primary);
+          cursor: pointer;
+        }
+        .type-select:focus {
+          outline: 2px solid var(--primary);
+          outline-offset: 1px;
+        }
+
         .detail-body {
           flex: 1;
           overflow-y: auto;

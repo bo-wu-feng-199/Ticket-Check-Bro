@@ -10,6 +10,7 @@ import { useInvoiceStore } from '../store/invoiceStore.js'
 import { isAllowedType, isWithinSizeLimit, getExtractionMethod, uid, formatFileSize } from '../utils/fileHelper.js'
 import { extractText } from '../core/extractor/index.js'
 import parserFactory from '../core/parser/index.js'
+import { setFile } from '../store/fileRefs.js'
 
 export function useFileManager() {
   const addEntries = useInvoiceStore(s => s.addEntries)
@@ -55,6 +56,9 @@ export function useFileManager() {
     }))
 
     addEntries(storeEntries)
+
+    // Store file references for PDF preview rendering
+    validEntries.forEach(e => setFile(e.uid, e.file))
 
     // Process each file asynchronously
     for (const entry of validEntries) {

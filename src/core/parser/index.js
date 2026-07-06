@@ -65,6 +65,27 @@ class ParserFactory {
   get parsers() {
     return [...this._parsers]
   }
+
+  /**
+   * Parse text using a specific document type.
+   * Used as fallback when auto-detection fails and user selects manually.
+   * @param {string} rawText - Extracted text from PDF or OCR
+   * @param {string} typeId - Document type identifier
+   * @returns {Object|null} { documentType, documentLabel, confidence: 0.5, fields }
+   */
+  parseWithType(rawText, typeId) {
+    const parser = this._parsers.find(p => p.typeId === typeId)
+    if (!parser) return null
+
+    const fields = parser.parse(rawText)
+
+    return {
+      documentType: parser.typeId,
+      documentLabel: parser.label,
+      confidence: 0.5,
+      fields
+    }
+  }
 }
 
 export default new ParserFactory()

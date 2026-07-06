@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { removeFile, clearFiles } from './fileRefs.js'
 
 const initialState = {
   entries: [],
@@ -26,6 +27,7 @@ export const useInvoiceStore = create((set, get) => ({
     set(state => {
       const entry = state.entries.find(e => e.uid === uid)
       if (entry?.previewUrl) URL.revokeObjectURL(entry.previewUrl)
+      removeFile(uid)
       return {
         entries: state.entries.filter(e => e.uid !== uid),
         results: (() => { const r = { ...state.results }; delete r[uid]; return r })(),
@@ -36,6 +38,7 @@ export const useInvoiceStore = create((set, get) => ({
   clearAll: () =>
     set(state => {
       state.entries.forEach(e => { if (e.previewUrl) URL.revokeObjectURL(e.previewUrl) })
+      clearFiles()
       return { entries: [], results: {}, selectedUid: null }
     }),
 
@@ -72,6 +75,23 @@ export const useInvoiceStore = create((set, get) => ({
       entries: state.entries.map(e =>
         e.uid === uid ? { ...e, status: 'failed', error } : e
       )
+    })),
+
+  /**
+   * Override document type for a parsed result.
+   * Used when auto-detection fails and user selects a type manually.
+   */
+  setDocumentType: (uid, typeId, result) =>
+    set(state => ({
+      results: {
+        ...state.results,
+        [uid]: {
+          ...result,
+          documentType: typeId,
+          documentLabel: result.documentLabel,
+          confidence: 0.5
+        }
+      }
     })),
 
   updateField: (uid, fieldKey, value) =>

@@ -7,12 +7,15 @@
 
 import * as pdfjsLib from 'pdfjs-dist'
 
-// Set the workerSrc path for pdf.js
-// pdfjs-dist v4+ with Vite handles worker via dynamic import
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url
-).toString()
+// Configure pdfjs worker once (global singleton — affects all importers)
+if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.mjs',
+    import.meta.url
+  ).toString()
+}
+
+export { pdfjsLib }
 
 /**
  * Extract text content from a PDF File object.

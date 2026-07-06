@@ -1,6 +1,6 @@
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { exportToExcel } from '../core/exporter/ExcelExporter.js'
-import { Download, Merge, FileEdit } from 'lucide-react'
+import { Download } from 'lucide-react'
 
 export default function BottomBar() {
   const entries = useInvoiceStore(s => s.entries)
@@ -9,16 +9,6 @@ export default function BottomBar() {
 
   const handleExport = () => {
     exportToExcel(entries, results)
-  }
-
-  const handleMerge = () => {
-    // Placeholder — PDF merge requires a more complex pipeline (pdf-lib)
-    alert('PDF merge functionality is coming in a future release. Individual file downloads are available.')
-  }
-
-  const handleBatchRename = () => {
-    // Placeholder for the batch rename modal
-    alert('Batch rename functionality is coming in a future release.')
   }
 
   return (
@@ -38,22 +28,6 @@ export default function BottomBar() {
         >
           <Download size="16" />
           Export to Excel
-        </button>
-        <button
-          className="btn btn-outline"
-          onClick={handleMerge}
-          disabled={parsedCount === 0}
-        >
-          <Merge size="16" />
-          Merge PDFs
-        </button>
-        <button
-          className="btn btn-outline"
-          onClick={handleBatchRename}
-          disabled={parsedCount === 0}
-        >
-          <FileEdit size="16" />
-          Batch Rename
         </button>
       </div>
 
@@ -76,17 +50,9 @@ export default function BottomBar() {
           font-size: 13px;
           color: var(--text-secondary);
         }
-        .bottom-bar-sep {
-          opacity: 0.3;
-        }
-        .bottom-bar-ready {
-          color: var(--success);
-          font-weight: 500;
-        }
-        .bottom-bar-actions {
-          display: flex;
-          gap: 8px;
-        }
+        .bottom-bar-sep { opacity: 0.3; }
+        .bottom-bar-ready { color: var(--success); font-weight: 500; }
+        .bottom-bar-actions { display: flex; gap: 8px; }
         .btn {
           display: inline-flex;
           align-items: center;
@@ -101,27 +67,16 @@ export default function BottomBar() {
           background: var(--card-bg);
           color: var(--text-primary);
         }
-        .btn:disabled {
-          opacity: 0.4;
-          cursor: not-allowed;
-        }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn-primary {
           background: var(--primary);
           color: #fff;
           border-color: var(--primary);
         }
-        .btn-primary:hover:not(:disabled) {
-          background: var(--primary-hover);
-        }
-        .btn-outline:hover:not(:disabled) {
-          border-color: var(--primary);
-          color: var(--primary);
-          background: var(--primary-light);
-        }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
         @media (max-width: 640px) {
           .bottom-bar { flex-direction: column; align-items: stretch; }
-          .bottom-bar-actions { justify-content: stretch; }
-          .bottom-bar-actions .btn { flex: 1; }
+          .bottom-bar-actions .btn { width: 100%; }
         }
       `}</style>
     </div>
