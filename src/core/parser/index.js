@@ -14,6 +14,7 @@ import VehicleInvoiceParser from './VehicleInvoiceParser.js'
 import TaxiInvoiceParser from './TaxiInvoiceParser.js'
 import FixedAmountParser from './FixedAmountParser.js'
 import TollInvoiceParser from './TollInvoiceParser.js'
+import { normalizeText } from '../../utils/regexPatterns.js'
 
 class ParserFactory {
   constructor() {
@@ -30,54 +31,38 @@ class ParserFactory {
 
   /**
    * Detect the best-matching document type and parse the text.
-   * @param {string} rawText - Extracted text from PDF or OCR
-   * @returns {Object|null} { documentType, documentLabel, confidence, fields }
+   * Delegates to each parser's analyze() which handles text normalization.
    */
   analyze(rawText) {
     if (!rawText || rawText.trim().length < 10) return null
 
-    let best = null
+    let bestResult = null
     let bestScore = 0
 
     for (const parser of this._parsers) {
-      const score = parser.confidence(rawText)
-      if (score > bestScore) {
-        bestScore = score
-        best = parser
+      const result = parser.analyze(rawText)
+      if (result && result.confidence > bestScore) {
+        bestScore = result.confidence
+        bestResult = result
       }
     }
 
-    if (!best || bestScore < 0.3) return null
-
-    const fields = best.parse(rawText)
-
-    return {
-      documentType: best.typeId,
-      documentLabel: best.label,
-      confidence: Math.round(bestScore * 100) / 100,
-      fields
-    }
+    return bestResult
   }
 
-  /**
-   * Return all registered parsers for manual type selection fallback.
-   */
   get parsers() {
     return [...this._parsers]
   }
 
   /**
    * Parse text using a specific document type.
-   * Used as fallback when auto-detection fails and user selects manually.
-   * @param {string} rawText - Extracted text from PDF or OCR
-   * @param {string} typeId - Document type identifier
-   * @returns {Object|null} { documentType, documentLabel, confidence: 0.5, fields }
    */
   parseWithType(rawText, typeId) {
     const parser = this._parsers.find(p => p.typeId === typeId)
     if (!parser) return null
 
-    const fields = parser.parse(rawText)
+    const normalized = normalizeText(rawText)
+    const fields = parser.parse(normalized)
 
     return {
       documentType: parser.typeId,

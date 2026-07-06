@@ -7,6 +7,8 @@
  *   - `parse(text)`: returns { typeId, confidence, fields: { key: { label, value } } }
  */
 
+import { normalizeText } from '../../utils/regexPatterns.js'
+
 export default class InvoiceParser {
   constructor() {
     if (new.target === InvoiceParser) {
@@ -14,51 +16,34 @@ export default class InvoiceParser {
     }
   }
 
-  /**
-   * Unique identifier for this document type.
-   * @returns {string}
-   */
   get typeId() {
     throw new Error('Subclass must implement typeId getter')
   }
 
-  /**
-   * Human-readable label for this document type.
-   * @returns {string}
-   */
   get label() {
     throw new Error('Subclass must implement label getter')
   }
 
-  /**
-   * Detect confidence (0–1) that `text` belongs to this document type.
-   * @param {string} text
-   * @returns {number}
-   */
   confidence(text) {
     throw new Error('Subclass must implement confidence(text)')
   }
 
-  /**
-   * Parse `text` and return structured field data.
-   * @param {string} text
-   * @returns {Object} fields — { key: { label, value } }
-   */
   parse(text) {
     throw new Error('Subclass must implement parse(text)')
   }
 
   /**
-   * Convenience: run confidence + parse in one call.
+   * Convenience: normalize text, run confidence + parse in one call.
    */
   analyze(text) {
-    const score = this.confidence(text)
+    const normalized = normalizeText(text)
+    const score = this.confidence(normalized)
     if (score < 0.3) return null
     return {
       documentType: this.typeId,
       documentLabel: this.label,
       confidence: score,
-      fields: this.parse(text)
+      fields: this.parse(normalized)
     }
   }
 }
