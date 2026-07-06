@@ -1,0 +1,17 @@
+{
+  "name": "Ticket-Check-Bro",
+  "short_name": "TicketBro",
+  "description": "Intelligent Document Parsing — extract structured fields from invoices and receipts in-browser.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#2563EB",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

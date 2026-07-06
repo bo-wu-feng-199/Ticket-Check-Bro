@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { Upload } from 'lucide-react'
+import { Upload, Lock } from 'lucide-react'
 import { useFileManager } from '../hooks/useFileManager.js'
 
 export default function DropZone() {
@@ -23,15 +23,12 @@ export default function DropZone() {
     e.preventDefault()
     e.stopPropagation()
     setIsDragging(false)
-
     if (e.dataTransfer.files.length > 0) {
       addFiles(e.dataTransfer.files)
     }
   }, [addFiles])
 
-  const handleClick = () => {
-    inputRef.current?.click()
-  }
+  const handleClick = () => inputRef.current?.click()
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
@@ -48,12 +45,18 @@ export default function DropZone() {
       onDrop={handleDrop}
       onClick={handleClick}
     >
-      <Upload size="32" className="dropzone-icon" />
+      <div className="dropzone-ring" />
+      <div className="dropzone-icon-wrap">
+        <Upload size="28" className="dropzone-icon" />
+      </div>
       <div className="dropzone-text">
         <span className="dropzone-primary">Drop your documents here</span>
-        <span className="dropzone-secondary">or click to browse — PDF, JPG, JPEG, PNG supported</span>
+        <span className="dropzone-secondary">or click to browse &mdash; PDF, JPG, JPEG, PNG</span>
       </div>
-      <span className="dropzone-badge">100% client-side — zero server upload</span>
+      <div className="dropzone-meta">
+        <Lock size="12" />
+        <span>100% client-side</span>
+      </div>
       <input
         ref={inputRef}
         type="file"
@@ -65,32 +68,76 @@ export default function DropZone() {
 
       <style>{`
         .dropzone {
+          position: relative;
           display: flex;
           align-items: center;
           gap: 16px;
-          margin: 16px 16px 0;
-          padding: 20px 24px;
-          border: 2px dashed var(--border);
+          margin: 16px 24px 0;
+          padding: 22px 28px;
           border-radius: var(--radius-lg);
           background: var(--card-bg);
+          border: 2px dashed var(--border);
           cursor: pointer;
-          transition: all 250ms ease;
+          transition: all var(--transition-slow);
+          overflow: hidden;
+        }
+        .dropzone::before {
+          content: '';
+          position: absolute;
+          inset: -1px;
+          border-radius: inherit;
+          background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.08));
+          opacity: 0;
+          transition: opacity var(--transition-slow);
         }
         .dropzone:hover {
           border-color: var(--primary);
-          background: var(--primary-light);
+        }
+        .dropzone:hover::before {
+          opacity: 1;
         }
         .dropzone.dragging {
           border-color: var(--primary);
+          border-style: solid;
+          transform: scale(1.015);
+          box-shadow: var(--shadow-glow);
           background: var(--primary-light);
-          transform: scale(1.01);
-          box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.15);
+        }
+        .dropzone.dragging .dropzone-ring {
+          opacity: 1;
+          animation: ring-expand 0.8s ease-out forwards;
+        }
+        .dropzone-ring {
+          position: absolute;
+          inset: -8px;
+          border-radius: calc(var(--radius-lg) + 6px);
+          border: 2px solid var(--primary);
+          opacity: 0;
+          pointer-events: none;
+        }
+        @keyframes ring-expand {
+          0%   { opacity: 0.6; transform: scale(0.95); }
+          100% { opacity: 0;   transform: scale(1.04); }
+        }
+
+        .dropzone-icon-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          border-radius: var(--radius-md);
+          background: var(--primary-light);
+          flex-shrink: 0;
+          transition: transform var(--transition);
+        }
+        .dropzone:hover .dropzone-icon-wrap {
+          transform: scale(1.08) rotate(-4deg);
         }
         .dropzone-icon {
           color: var(--primary);
-          flex-shrink: 0;
-          opacity: 0.8;
         }
+
         .dropzone-text {
           flex: 1;
           display: flex;
@@ -101,24 +148,30 @@ export default function DropZone() {
           font-size: 15px;
           font-weight: 600;
           color: var(--text-primary);
+          letter-spacing: -0.2px;
         }
         .dropzone-secondary {
           font-size: 13px;
-          color: var(--text-secondary);
+          color: var(--text-muted);
         }
-        .dropzone-badge {
-          padding: 4px 10px;
-          background: #E8F5E9;
-          color: #2E7D32;
+
+        .dropzone-meta {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          padding: 5px 12px;
+          background: var(--success-light);
+          color: var(--success);
           font-size: 11px;
           font-weight: 600;
           border-radius: 100px;
           white-space: nowrap;
           flex-shrink: 0;
         }
+
         @media (max-width: 640px) {
-          .dropzone { flex-wrap: wrap; }
-          .dropzone-badge { display: none; }
+          .dropzone { margin: 12px 16px 0; padding: 16px 18px; flex-wrap: wrap; }
+          .dropzone-meta { display: none; }
         }
       `}</style>
     </div>

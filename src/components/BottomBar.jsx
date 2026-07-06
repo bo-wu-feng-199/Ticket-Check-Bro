@@ -1,6 +1,6 @@
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { exportToExcel } from '../core/exporter/ExcelExporter.js'
-import { Download } from 'lucide-react'
+import { Download, CheckCircle2 } from 'lucide-react'
 
 export default function BottomBar() {
   const entries = useInvoiceStore(s => s.entries)
@@ -14,15 +14,20 @@ export default function BottomBar() {
   return (
     <div className="bottom-bar">
       <div className="bottom-bar-info">
-        <span className="bottom-bar-count">{parsedCount} par{parsedCount !== 1 ? 's' : ''}ed documen{parsedCount !== 1 ? 'ts' : 't'}</span>
-        {parsedCount > 0 && <span className="bottom-bar-sep">&middot;</span>}
-        {parsedCount > 0 && (
-          <span className="bottom-bar-ready">Ready for export</span>
+        {parsedCount > 0 ? (
+          <>
+            <CheckCircle2 size="16" className="bottom-bar-icon" />
+            <span className="bottom-bar-count">{parsedCount} file{parsedCount !== 1 ? 's' : ''} parsed</span>
+            <span className="bottom-bar-sep">&middot;</span>
+            <span className="bottom-bar-ready">Ready for export</span>
+          </>
+        ) : (
+          <span className="bottom-bar-count">No parsed documents</span>
         )}
       </div>
       <div className="bottom-bar-actions">
         <button
-          className="btn btn-primary"
+          className="btn-export"
           onClick={handleExport}
           disabled={parsedCount === 0}
         >
@@ -36,9 +41,9 @@ export default function BottomBar() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 12px 20px;
+          padding: 12px 24px;
           background: var(--card-bg);
-          border-top: 1px solid var(--border);
+          border-top: 1px solid var(--card-border);
           gap: 16px;
           flex-shrink: 0;
           flex-wrap: wrap;
@@ -50,33 +55,44 @@ export default function BottomBar() {
           font-size: 13px;
           color: var(--text-secondary);
         }
+        .bottom-bar-icon { color: var(--success); }
         .bottom-bar-sep { opacity: 0.3; }
         .bottom-bar-ready { color: var(--success); font-weight: 500; }
         .bottom-bar-actions { display: flex; gap: 8px; }
-        .btn {
+
+        .btn-export {
           display: inline-flex;
           align-items: center;
-          gap: 6px;
-          padding: 8px 16px;
+          gap: 7px;
+          padding: 9px 20px;
           border-radius: var(--radius-sm);
           font-size: 13px;
-          font-weight: 500;
+          font-weight: 600;
           cursor: pointer;
           transition: all var(--transition);
-          border: 1px solid var(--border);
-          background: var(--card-bg);
-          color: var(--text-primary);
-        }
-        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .btn-primary {
           background: var(--primary);
           color: #fff;
-          border-color: var(--primary);
+          border: none;
+          letter-spacing: -0.2px;
         }
-        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+        .btn-export:hover:not(:disabled) {
+          background: var(--primary-hover);
+          transform: translateY(-1px);
+          box-shadow: var(--shadow-md);
+        }
+        .btn-export:disabled {
+          opacity: 0.35;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+        }
+        .btn-export:active:not(:disabled) {
+          transform: translateY(0);
+        }
+
         @media (max-width: 640px) {
           .bottom-bar { flex-direction: column; align-items: stretch; }
-          .bottom-bar-actions .btn { width: 100%; }
+          .bottom-bar-actions .btn-export { width: 100%; justify-content: center; }
         }
       `}</style>
     </div>
