@@ -1,16 +1,11 @@
 import InvoiceParser from './InvoiceParser.js'
-import { PATTERNS, extractField } from '../../utils/regexPatterns.js'
 
 /**
- * Parser for Chinese Value-Added Tax (VAT) Common Invoices.
+ * Parser for Chinese Value-Added Tax (VAT) Invoices.
  *
- * pdfjs-dist linearizes multi-row PDF layouts top→bottom, left→right.
- * Labels on row N and values on row N+1 end up far apart in the linear text:
- *
- *   "发票号码:开票日期:...购买方信息...开票人: 26322... 2026年01月30日 ... ¥ 2800.00"
- *
- * Strategy: split text into label-region and value-region, then extract fields
- * from the value-region using positional heuristics.
+ * Strategy: search the ENTIRE normalized text for each field independently.
+ * This handles PDF layout variations where the value block may appear
+ * before or after the "开票人:" marker depending on the document structure.
  */
 export default class CommonInvoiceParser extends InvoiceParser {
   get typeId() { return 'common_invoice' }
@@ -19,58 +14,55 @@ export default class CommonInvoiceParser extends InvoiceParser {
   confidence(text) {
     let score = 0
     if (/发票|invoice/i.test(text)) score += 0.3
-    if (PATTERNS.invoiceNumber.test(text)) score += 0.25
-    if (/购买方|买方|销售方|卖方/.test(text)) score += 0.2
-    if (/价税合计|合计/.test(text)) score += 0.15
+    if (/开票人/.test(text)) score += 0.15
+    if (/购买方|买方|销售方|卖方/.test(text)) score += 0.25
+    if (/价税合计|合计/.test(text)) score += 0.2
+    if (/电子发票/.test(text)) score += 0.1
     return Math.min(score, 1)
   }
 
   parse(text) {
-    // Split: everything before "开票人:" is labels, after is values
-    const parts = text.split(/开票人\s*[:：]\s*/)
-    const labelRegion = parts[0] || ''
-    const valueRegion = parts.length > 1 ? parts[1] : text
-
-    // ── Extract from value region ──
-
-    // invoiceNumber: first 20-digit number in value region
-    const invNumMatch = valueRegion.match(/(\d{16,22})/)
+    // ── Invoice Number: first 16-22 digit sequence ──
+    const invNumMatch = text.match(/\b(\d{16,22})\b/)
     const invoiceNumber = invNumMatch ? invNumMatch[1] : ''
 
-    // issueDate: first Chinese date in value region
-    const dateMatch = valueRegion.match(/(\d{4}年\d{1,2}月\d{1,2}日)/)
+    // ── Issue Date: first Chinese date ──
+    const dateMatch = text.match(/(\d{4}年\d{1,2}月\d{1,2}日)/)
     let issueDate = dateMatch ? dateMatch[1] : ''
     issueDate = issueDate.replace(/年/g, '-').replace(/月/g, '-').replace(/日/g, '')
 
-    // Company names: two long Chinese-name strings (negative lookbehind prevents digit prefix)
-    const companyMatches = valueRegion.matchAll(/(?<!\d)([\u4e00-\u9fff（）()]{4,40}(?:有限公司|经营部|商行|店|厂|社|中心))/g)
-    const companies = [...companyMatches].map(m => m[1])
-    const buyerName = companies[0] || ''
-    const sellerName = companies[1] || ''
+    // ── Company names: find all company-like names, filter label fragments ──
+    // Use broad suffix list but aggressively filter label-text false positives
+    const companyRegex = /(?<!\d)([\u4e00-\u9fff（）()]{4,40}(?:有限公司|经营部|经销部|服饰店|服装店|器材厂|科技公司|工作室|商行|专卖店|旗舰店))/g
+    const labelNoise = /信息|统一|代码|识别号|征收率|规格|型号|备注|项目名称|购买方|销售方|开票人|收款人|复核人|开户银行|银行账号|纳税人|信用|电话|地址|开户行/
+    const companies = [...text.matchAll(companyRegex)]
+      .map(m => m[1])
+      .filter(n => !labelNoise.test(n))
+      .filter((v, i, a) => a.indexOf(v) === i) // deduplicate
 
-    // Tax IDs: 15-20 char alphanumeric (skip the invoice number)
-    const codeMatches = valueRegion.matchAll(/([A-Za-z0-9]{15,20})/g)
+    const buyerName = companies[0] || ''
+    const sellerName = companies[1] || (companies.length >= 1 ? companies[0] : '')
+
+    // ── Tax IDs: 15-20 char alphanumeric (exclude invoice number) ──
+    const codeMatches = text.matchAll(/\b([A-Za-z0-9]{15,20})\b/g)
     const codes = [...codeMatches].map(m => m[1]).filter(c => c !== invoiceNumber)
     const buyerTaxId = codes[0] || ''
-    const sellerTaxId = codes[1] || ''
+    const sellerTaxId = codes.length > 1 ? codes[1] : codes[0] || ''
 
-    // Amounts: all ¥-prefixed values
-    const amountMatches = valueRegion.matchAll(/[¥￥]\s*([0-9,]+\.\d{2})/g)
-    const amounts = [...amountMatches].map(m => parseFloat(m[1].replace(/,/g, '')))
+    // ── Amounts: all ¥-prefixed values ──
+    const amountMatches = text.matchAll(/[¥￥]\s*([0-9,]+\.\d{2})/g)
+    const amounts = [...amountMatches].map(m => parseFloat(m[1].replace(/,/g, ''))).sort((a, b) => b - a)
 
-    // totalAmount: largest ¥ amount
-    const totalAmount = amounts.length > 0 ? Math.max(...amounts).toFixed(2) : ''
+    // totalAmount: largest ¥ amount (usually the total at ¥2800.00)
+    const totalAmount = amounts.length > 0 ? amounts[0].toFixed(2) : ''
+    // amount (excl tax): second largest
+    const amount = amounts.length > 1 ? amounts[1].toFixed(2) : (amounts.length > 0 ? amounts[0].toFixed(2) : '')
+    // taxAmount: smallest ¥ amount
+    const taxAmount = amounts.length > 2 ? amounts[amounts.length - 1].toFixed(2) : 
+                      amounts.length > 1 ? amounts[amounts.length - 1].toFixed(2) : ''
 
-    // amount (excl tax): the non-total ¥ value if there are >= 2 amounts
-    const nonTaxAmounts = amounts.filter(a => a < parseFloat(totalAmount || '999999'))
-    const amount = nonTaxAmounts.length > 0 ? Math.max(...nonTaxAmounts).toFixed(2) : ''
-
-    // taxAmount: last ¥ amount or the smaller one
-    const sortedDesc = [...amounts].sort((a, b) => b - a)
-    const taxAmount = sortedDesc.length > 1 ? sortedDesc[sortedDesc.length - 1].toFixed(2) : ''
-
-    // invoiceCode: try to find in label region
-    const codeMatch = labelRegion.match(/发票代码[^a-zA-Z0-9]*?(\w{10,20})/)
+    // ── Invoice Code: may not exist on 普通发票 ──
+    const codeMatch = text.match(/发票代码[^a-zA-Z0-9]*?(\w{10,20})/)
     const invoiceCode = codeMatch ? codeMatch[1] : ''
 
     return {
