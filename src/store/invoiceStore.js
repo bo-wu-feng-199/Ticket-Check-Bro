@@ -23,14 +23,21 @@ export const useInvoiceStore = create((set, get) => ({
     })),
 
   removeEntry: (uid) =>
-    set(state => ({
-      entries: state.entries.filter(e => e.uid !== uid),
-      results: (() => { const r = { ...state.results }; delete r[uid]; return r })(),
-      selectedUid: state.selectedUid === uid ? null : state.selectedUid
-    })),
+    set(state => {
+      const entry = state.entries.find(e => e.uid === uid)
+      if (entry?.previewUrl) URL.revokeObjectURL(entry.previewUrl)
+      return {
+        entries: state.entries.filter(e => e.uid !== uid),
+        results: (() => { const r = { ...state.results }; delete r[uid]; return r })(),
+        selectedUid: state.selectedUid === uid ? null : state.selectedUid
+      }
+    }),
 
   clearAll: () =>
-    set({ entries: [], results: {}, selectedUid: null }),
+    set(state => {
+      state.entries.forEach(e => { if (e.previewUrl) URL.revokeObjectURL(e.previewUrl) })
+      return { entries: [], results: {}, selectedUid: null }
+    }),
 
   moveEntry: (fromIndex, toIndex) =>
     set(state => {

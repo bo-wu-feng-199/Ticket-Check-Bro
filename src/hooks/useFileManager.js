@@ -49,6 +49,7 @@ export function useFileManager() {
       fileName: e.fileName,
       fileSize: e.fileSize,
       mimeType: e.mimeType,
+      previewUrl: e.mimeType.startsWith('image/') ? URL.createObjectURL(e.file) : null,
       status: 'parsing',
       error: null
     }))

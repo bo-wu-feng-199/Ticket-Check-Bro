@@ -1,12 +1,8 @@
-import { useMemo } from 'react'
 import { FileText, Image } from 'lucide-react'
 
 export default function PreviewPanel({ file }) {
   const isImage = file?.mimeType?.startsWith('image/')
-  const previewUrl = useMemo(() => {
-    if (!file?.file) return null
-    return URL.createObjectURL(file.file)
-  }, [file?.uid])
+  const previewUrl = file?.previewUrl || null
 
   const fileName = file?.fileName || ''
   const isProcessing = file?.status === 'parsing'
