@@ -41,7 +41,7 @@ export default class CommonInvoiceParser extends InvoiceParser {
       .filter((v, i, a) => a.indexOf(v) === i) // deduplicate
 
     const buyerName = companies[0] || ''
-    const sellerName = companies[1] || (companies.length >= 1 ? companies[0] : '')
+    const sellerName = companies.length >= 2 ? companies[1] : ''
 
     // ── Tax IDs: 15-20 char alphanumeric (exclude invoice number) ──
     const codeMatches = text.matchAll(/\b([A-Za-z0-9]{15,20})\b/g)

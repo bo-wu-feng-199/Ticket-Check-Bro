@@ -16,8 +16,11 @@ export default function PreviewPanel({ file }) {
 
   // Render PDF first page to canvas
   useEffect(() => {
+    // Reset state when entry changes — cleanup triggers on uid change
+    setPdfImageUrl(null)
+    setPdfLoading(false)
+
     if (!isPdf || isProcessing) return
-    if (pdfImageUrl) return // already rendered
 
     let cancelled = false
     setPdfLoading(true)

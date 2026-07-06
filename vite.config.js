@@ -14,7 +14,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          pdfEngine: ['pdfjs-dist'],
+          pdfEngine: ['pdfjs-dist', 'pdf-lib'],
           ocrEngine: ['tesseract.js'],
           vendor: ['react', 'react-dom', 'zustand']
         }
