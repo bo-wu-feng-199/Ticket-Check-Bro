@@ -14,6 +14,24 @@ Parse invoices, receipts, and financial documents directly in your browser. Uplo
 
 👉 **[ticket-check-bro.vercel.app](https://ticket-check-bro.vercel.app/)** — no signup, no install, just open and drop your files.
 
+<p align="center">
+  <img src="docs/screenshots/screenshot-1.png" alt="Ticket-Check-Bro - Full interface showing parsed documents" width="800"/>
+  <br/>
+  <em>Upload, parse, and export — all in your browser</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/screenshot-2.png" alt="Upload interface with drag-and-drop zone" width="640"/>
+  <br/>
+  <em>Drag-and-drop file upload with instant parsing</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/screenshot-3.png" alt="Parsed invoice details with editable fields" width="800"/>
+  <br/>
+  <em>Extracted fields displayed in a structured card layout — click to edit</em>
+</p>
+
 ---
 
 ## Capabilities
