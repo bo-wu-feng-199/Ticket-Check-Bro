@@ -4,4 +4,8 @@ dev-dist/
 *.local
 .DS_Store
 *.png
+!.gitkeep
 .playwright-cli/
+
+# Allow README screenshots
+!docs/screenshots/*.png
