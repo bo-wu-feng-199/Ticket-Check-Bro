@@ -1,10 +1,18 @@
 # Ticket-Check-Bro
 
+[![Live Demo](https://img.shields.io/badge/Try%20it%20live-Vercel-2563EB?style=for-the-badge&logo=vercel&logoColor=white)](https://ticket-check-bro.vercel.app/)
+
 > Intelligent Document Intelligence Platform
 
 Parse invoices, receipts, and financial documents directly in your browser. Upload PDFs and images — the engine extracts structured fields, presents a human-readable summary, and exports everything to a unified spreadsheet.
 
 **100% client-side. Your data never touches a server.**
+
+---
+
+## Try It Now
+
+👉 **[ticket-check-bro.vercel.app](https://ticket-check-bro.vercel.app/)** — no signup, no install, just open and drop your files.
 
 ---
 
@@ -17,8 +25,9 @@ Parse invoices, receipts, and financial documents directly in your browser. Uplo
 | **Schema-aware field recognition** | 7 document types, each with a dedicated strategy |
 | **Structured visualization** | Card-based detail panel with field-level rendering |
 | **Bulk export** | Unified spreadsheet download (.xlsx) via SheetJS |
-| **Duplicate detection** | Content-aware hash comparison across the corpus |
+| **PDF merge** | Combine multiple PDFs into a single document |
 | **Batch rename** | Template-driven file renaming using extracted metadata |
+| **Duplicate detection** | Content-aware hash comparison across the corpus |
 
 ### Supported Document Types
 
@@ -39,7 +48,7 @@ Layer            │ Technology            │ Responsibility
 ─────────────────┼───────────────────────┼─────────────────────────────
 Presentation     │ React 18 + Vite       │ Component tree, state, routing
 State            │ Zustand               │ Reactive store, derived stats
-PDF Engine       │ pdfjs-dist            │ Text extraction from PDF layers
+PDF Engine       │ pdfjs-dist + pdf-lib  │ Text extraction + merge
 OCR Engine       │ Tesseract.js (WASM)   │ Image-to-text via LSTM models
 Parsing          │ Strategy Pattern      │ 7 specialized parser strategies
 Export           │ SheetJS (xlsx)        │ Spreadsheet generation
@@ -65,7 +74,7 @@ Zustand Store → React Re-render → UI + Export
 ## Quick Start
 
 ```bash
-git clone https://github.com/absolutelyZero/Ticket-Check-Bro.git
+git clone https://github.com/bo-wu-feng-199/Ticket-Check-Bro.git
 cd Ticket-Check-Bro
 npm install
 npm run dev
@@ -88,7 +97,7 @@ Push to GitHub `main` branch — Vercel auto-deploys:
 
 ```bash
 git add .
-git commit -m "chore: initial scaffold"
+git commit -m "chore: update"
 git push origin main
 ```
 
