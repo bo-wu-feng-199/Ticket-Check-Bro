@@ -10,7 +10,7 @@ import { useInvoiceStore } from '../store/invoiceStore.js'
 import { isAllowedType, isWithinSizeLimit, getExtractionMethod, uid, formatFileSize } from '../utils/fileHelper.js'
 import { extractText } from '../core/extractor/index.js'
 import parserFactory from '../core/parser/index.js'
-import { setFile } from '../store/fileRefs.js'
+import { setFile, getFile } from '../store/fileRefs.js'
 
 export function useFileManager() {
   const addEntries = useInvoiceStore(s => s.addEntries)
@@ -97,5 +97,45 @@ export function useFileManager() {
     }
   }, [addEntries, updateEntryStatus, setResult, setParseError])
 
-  return { addFiles }
+  const retryFile = useCallback(async (uid) => {
+    const file = getFile(uid)
+    if (!file) {
+      console.error(`No file reference found for uid: ${uid}`)
+      return
+    }
+
+    const entry = useInvoiceStore.getState().entries.find(e => e.uid === uid)
+    if (!entry) return
+
+    updateEntryStatus(uid, 'parsing')
+
+    try {
+      const method = getExtractionMethod(file)
+      const rawText = await extractText(file, method)
+
+      const result = parserFactory.analyze(rawText)
+
+      if (result && result.confidence >= 0.3) {
+        setResult(uid, {
+          ...result,
+          rawText: rawText.substring(0, 2000)
+        })
+      } else {
+        setResult(uid, {
+          documentType: 'unknown',
+          documentLabel: 'Unknown Document',
+          confidence: 0,
+          fields: {
+            rawContent: { label: 'Extracted Text', value: rawText.substring(0, 500) }
+          },
+          rawText: rawText.substring(0, 2000)
+        })
+      }
+    } catch (err) {
+      console.error(`Retry failed for ${entry.fileName}:`, err)
+      setParseError(uid, err.message || 'Retry failed')
+    }
+  }, [updateEntryStatus, setResult, setParseError])
+
+  return { addFiles, retryFile }
 }

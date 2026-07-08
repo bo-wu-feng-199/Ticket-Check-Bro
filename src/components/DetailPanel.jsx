@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { getFieldSchema, DOCUMENT_TYPES } from '../data/schemas.js'
 import InvoiceCard from './InvoiceCard.jsx'
@@ -7,16 +8,18 @@ import parserFactory from '../core/parser/index.js'
 import { FileSearch, AlertTriangle } from 'lucide-react'
 
 const TYPE_OPTIONS = [
-  { id: 'common_invoice', label: 'Value-Added Tax Invoice' },
-  { id: 'train_ticket', label: 'Train Ticket' },
-  { id: 'flight_ticket', label: 'Flight Itinerary' },
-  { id: 'vehicle_invoice', label: 'Vehicle Invoice' },
-  { id: 'taxi_invoice', label: 'Taxi Receipt' },
-  { id: 'fixed_amount', label: 'Fixed-Amount Receipt' },
-  { id: 'toll_invoice', label: 'Toll Invoice' }
+  { id: 'common_invoice', labelKey: 'typeSelector.common_invoice' },
+  { id: 'train_ticket', labelKey: 'typeSelector.train_ticket' },
+  { id: 'flight_ticket', labelKey: 'typeSelector.flight_ticket' },
+  { id: 'vehicle_invoice', labelKey: 'typeSelector.vehicle_invoice' },
+  { id: 'taxi_invoice', labelKey: 'typeSelector.taxi_invoice' },
+  { id: 'fixed_amount', labelKey: 'typeSelector.fixed_amount' },
+  { id: 'toll_invoice', labelKey: 'typeSelector.toll_invoice' },
+  { id: 'english_invoice', labelKey: 'typeSelector.english_invoice' }
 ]
 
 export default function DetailPanel() {
+  const { t } = useTranslation()
   const selectedUid = useInvoiceStore(s => s.selectedUid)
   const entries = useInvoiceStore(s => s.entries)
   const results = useInvoiceStore(s => s.results)
@@ -31,7 +34,7 @@ export default function DetailPanel() {
     return (
       <div className="detail-empty">
         <FileSearch size="48" opacity="0.3" />
-        <p>Select a document to inspect</p>
+        <p>{t('detailPanel.selectPrompt')}</p>
       </div>
     )
   }
@@ -66,15 +69,15 @@ export default function DetailPanel() {
       {needsTypeSelection && result && (
         <div className="type-selector-bar">
           <AlertTriangle size="14" />
-          <span>Auto-detection was uncertain. Select the correct document type:</span>
+          <span>{t('detailPanel.chooseType')}</span>
           <select
             className="type-select"
             value={documentType}
             onChange={(e) => handleTypeChange(e.target.value)}
           >
-            <option value="" disabled>Choose type...</option>
-            {TYPE_OPTIONS.map(t => (
-              <option key={t.id} value={t.id}>{t.label}</option>
+            <option value="" disabled>{t('typeSelector.placeholder')}</option>
+            {TYPE_OPTIONS.map(opt => (
+              <option key={opt.id} value={opt.id}>{t(opt.labelKey)}</option>
             ))}
           </select>
         </div>

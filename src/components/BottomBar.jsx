@@ -1,11 +1,14 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { exportToExcel } from '../core/exporter/ExcelExporter.js'
-import { mergePdfs } from '../core/exporter/PdfMerger.js'
-import { Download, FileUp, Tag, CheckCircle2 } from 'lucide-react'
+import { Download, FileUp, Tag, CheckCircle2, Camera } from 'lucide-react'
 import BatchRenameModal from './BatchRenameModal.jsx'
+import MergeModal from './MergeModal.jsx'
+import html2canvas from 'html2canvas'
 
 export default function BottomBar() {
+  const { t, i18n } = useTranslation()
   const entries = useInvoiceStore(s => s.entries)
   const results = useInvoiceStore(s => s.results)
   const parsedCount = entries.filter(e => e.status === 'parsed').length
@@ -13,17 +16,51 @@ export default function BottomBar() {
     e.mimeType === 'application/pdf' || /\.pdf$/i.test(e.fileName)
   ).length
   const [showRenameModal, setShowRenameModal] = useState(false)
+  const [showMergeModal, setShowMergeModal] = useState(false)
+  const [shareState, setShareState] = useState(null) // null | 'loading' | 'success'
 
   const handleExport = () => {
-    exportToExcel(entries, results)
+    const name = window.prompt(t('bottomBar.exportPrompt'), 'ticket-check-bro-export')
+    if (name === null) return
+    exportToExcel(entries, results, name + '.xlsx')
   }
 
-  const handleMerge = async () => {
+  const handleMerge = () => {
+    setShowMergeModal(true)
+  }
+
+  const handleShare = async () => {
+    setShareState('loading')
     try {
-      await mergePdfs(entries)
+      const el = document.querySelector('.app-shell')
+      if (!el) throw new Error('App shell not found')
+
+      const canvas = await html2canvas(el, { useCORS: true, scale: 2 })
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
+
+      if (!blob) throw new Error('Failed to create image blob')
+
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob })
+        ])
+      } catch {
+        // Fallback: download the image if clipboard fails
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'ticket-check-screenshot.png'
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        setTimeout(() => URL.revokeObjectURL(url), 3000)
+      }
+
+      setShareState('success')
+      setTimeout(() => setShareState(null), 2000)
     } catch (err) {
-      console.error('Merge failed:', err)
-      alert(`Merge failed: ${err.message}`)
+      console.error('Share screenshot failed:', err)
+      setShareState(null)
     }
   }
 
@@ -33,12 +70,12 @@ export default function BottomBar() {
         {parsedCount > 0 ? (
           <>
             <CheckCircle2 size="16" className="bottom-bar-icon" />
-            <span className="bottom-bar-count">{parsedCount} file{parsedCount !== 1 ? 's' : ''} parsed</span>
+            <span className="bottom-bar-count">{parsedCount}{t('bottomBar.files')} {t('bottomBar.parsed')}</span>
             <span className="bottom-bar-sep">&middot;</span>
-            <span className="bottom-bar-ready">Ready for export</span>
+            <span className="bottom-bar-ready">{t('bottomBar.ready')}</span>
           </>
         ) : (
-          <span className="bottom-bar-count">No parsed documents</span>
+          <span className="bottom-bar-count">{t('bottomBar.none')}</span>
         )}
       </div>
       <div className="bottom-bar-actions">
@@ -46,20 +83,20 @@ export default function BottomBar() {
           className="btn-merge"
           onClick={handleMerge}
           disabled={pdfCount < 2}
-          title={pdfCount < 2 ? `Need at least 2 PDFs (found ${pdfCount})` : `Merge ${pdfCount} PDFs`}
+          title={pdfCount < 2 ? `${t('bottomBar.mergeTooltip')} ${pdfCount})` : `${t('bottomBar.merge')} ${pdfCount} PDFs`}
         >
           <FileUp size="16" />
-          Merge PDFs
+          {t('bottomBar.merge')}
           {pdfCount >= 2 && <span className="btn-badge">{pdfCount}</span>}
         </button>
         <button
           className="btn-secondary"
           onClick={() => setShowRenameModal(true)}
           disabled={parsedCount === 0}
-          title={parsedCount === 0 ? 'Parse a document first' : `Rename ${parsedCount} files`}
+          title={parsedCount === 0 ? t('bottomBar.none') : `${t('bottomBar.rename')} ${parsedCount}${t('bottomBar.files')}`}
         >
           <Tag size="16" />
-          Batch Rename
+          {t('bottomBar.rename')}
           {parsedCount >= 1 && <span className="btn-badge">{parsedCount}</span>}
         </button>
         <button
@@ -68,11 +105,24 @@ export default function BottomBar() {
           disabled={parsedCount === 0}
         >
           <Download size="16" />
-          Export to Excel
+          {t('bottomBar.export')}
+        </button>
+        <button
+          className="btn-secondary"
+          onClick={handleShare}
+          disabled={shareState === 'loading'}
+        >
+          {shareState === 'loading' ? (
+            <span className="btn-spinner" />
+          ) : (
+            <Camera size="16" />
+          )}
+          {shareState === 'success' ? 'Copied!' : 'Share as Image'}
         </button>
       </div>
 
       {showRenameModal && <BatchRenameModal onClose={() => setShowRenameModal(false)} />}
+      {showMergeModal && <MergeModal onClose={() => setShowMergeModal(false)} />}
 
       <style>{`
         .bottom-bar {
@@ -174,6 +224,15 @@ export default function BottomBar() {
         .btn-merge:active:not(:disabled) {
           transform: translateY(0);
         }
+
+        .btn-spinner {
+          width: 14px; height: 14px;
+          border: 2px solid var(--border);
+          border-top-color: var(--primary);
+          border-radius: 50%;
+          animation: btnSpin 0.6s linear infinite;
+        }
+        @keyframes btnSpin { to { transform: rotate(360deg); } }
 
         .btn-badge {
           display: inline-flex;

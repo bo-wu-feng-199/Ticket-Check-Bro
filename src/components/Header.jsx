@@ -1,6 +1,41 @@
-import { Github, Star } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Github, Star, Moon, Sun, Beaker } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useInvoiceStore } from '../store/invoiceStore.js'
+import { DEMO_ENTRIES, DEMO_RESULTS } from '../data/demo.js'
+
+function getInitialTheme() {
+  const stored = localStorage.getItem('theme')
+  if (stored === 'dark' || stored === 'light') return stored
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
 
 export default function Header() {
+  const { t, i18n } = useTranslation()
+  const [theme, setTheme] = useState(getInitialTheme)
+  const addEntries = useInvoiceStore(s => s.addEntries)
+  const setResult = useInvoiceStore(s => s.setResult)
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+
+  const toggleLang = () => {
+    const next = i18n.language === 'zh' ? 'en' : 'zh'
+    i18n.changeLanguage(next)
+    localStorage.setItem('lang', next)
+  }
+
+  const handleLoadDemo = () => {
+    addEntries(DEMO_ENTRIES)
+    Object.entries(DEMO_RESULTS).forEach(([uid, result]) => {
+      setResult(uid, result)
+    })
+  }
+
   return (
     <header className="header">
       <div className="header-bg" />
@@ -21,30 +56,43 @@ export default function Header() {
             </svg>
           </div>
           <div className="header-text">
-            <h1 className="header-title">Ticket-Check-Bro</h1>
-            <p className="header-subtitle">Intelligent Document Intelligence Platform</p>
+            <h1 className="header-title">{t('header.title')}</h1>
+            <p className="header-subtitle">{t('header.subtitle')}</p>
           </div>
         </div>
 
         <div className="header-tagline">
           <span className="tagline-dot" />
-          Drop. Parse. Export. Done.
+          {t('header.tagline')}
         </div>
 
         <a
-          href="https://github.com/absolutelyZero/Ticket-Check-Bro"
+          href="https://github.com/bo-wu-feng-199/Ticket-Check-Bro"
           target="_blank"
           rel="noopener noreferrer"
           className="header-gh-link"
-          title="View on GitHub"
+          title={t('header.github')}
         >
           <Github size="18" />
-          <span>GitHub</span>
+          <span>{t('header.github')}</span>
           <span className="gh-badge">
             <Star size="12" />
-            Star
+            {t('header.star')}
           </span>
         </a>
+
+        <button className="header-gh-link" onClick={handleLoadDemo} title="Load Demo Data">
+          <Beaker size="16" />
+          <span>Demo</span>
+        </button>
+
+        <button className="header-icon-btn" onClick={toggleTheme} title={theme === 'dark' ? t('header.lightMode') : t('header.darkMode')}>
+          {theme === 'dark' ? <Sun size="16" /> : <Moon size="16" />}
+        </button>
+
+        <button className="header-gh-link" onClick={toggleLang} title={t('header.lang')}>
+          {t('header.lang')}
+        </button>
       </div>
 
       <style>{`
@@ -134,8 +182,28 @@ export default function Header() {
           font-weight: 500;
           transition: all var(--transition);
           background: rgba(255,255,255,0.03);
+          cursor: pointer;
         }
         .header-gh-link:hover {
+          border-color: rgba(255,255,255,0.2);
+          color: #F8FAFC;
+          background: rgba(255,255,255,0.06);
+          transform: translateY(-1px);
+        }
+        .header-icon-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 34px;
+          height: 34px;
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: var(--radius-sm);
+          color: #94A3B8;
+          background: rgba(255,255,255,0.03);
+          cursor: pointer;
+          transition: all var(--transition);
+        }
+        .header-icon-btn:hover {
           border-color: rgba(255,255,255,0.2);
           color: #F8FAFC;
           background: rgba(255,255,255,0.06);

@@ -1,10 +1,14 @@
+import { useTranslation } from 'react-i18next'
+
 export default function Footer() {
+  const { t } = useTranslation()
+
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <span className="footer-version">v1.1.0</span>
+        <span className="footer-version">{t('footer.version')}</span>
         <span className="footer-sep">&middot;</span>
-        <span>Built with
+        <span>{t('footer.tech')}
           <span className="footer-stack">
             <svg width="14" height="14" viewBox="0 0 32 32" fill="none" style={{marginLeft:4,verticalAlign:-3}}>
               <rect width="32" height="32" rx="4" fill="#61DAFB"/>
@@ -32,10 +36,10 @@ export default function Footer() {
         </span>
         <span className="footer-sep">&middot;</span>
         <a href="https://github.com/absolutelyZero/Ticket-Check-Bro/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
-          MIT License
+          {t('footer.license')}
         </a>
         <span className="footer-sep">&middot;</span>
-        <span className="footer-privacy">Your data never leaves your browser</span>
+        <span className="footer-privacy">{t('footer.privacy')}</span>
       </div>
 
       <style>{`

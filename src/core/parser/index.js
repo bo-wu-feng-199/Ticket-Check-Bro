@@ -14,6 +14,7 @@ import VehicleInvoiceParser from './VehicleInvoiceParser.js'
 import TaxiInvoiceParser from './TaxiInvoiceParser.js'
 import FixedAmountParser from './FixedAmountParser.js'
 import TollInvoiceParser from './TollInvoiceParser.js'
+import EnglishInvoiceParser from './EnglishInvoiceParser.js'
 import { normalizeText } from '../../utils/regexPatterns.js'
 
 class ParserFactory {
@@ -25,7 +26,8 @@ class ParserFactory {
       new VehicleInvoiceParser(),
       new TaxiInvoiceParser(),
       new FixedAmountParser(),
-      new TollInvoiceParser()
+      new TollInvoiceParser(),
+      new EnglishInvoiceParser()
     ]
   }
 

@@ -1,12 +1,14 @@
+import { useTranslation } from 'react-i18next'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { formatFieldValue } from '../utils/formatHelper.js'
 import { Pencil } from 'lucide-react'
 
 export default function InvoiceCard({ fields, schema, uid }) {
+  const { t } = useTranslation()
   const updateField = useInvoiceStore(s => s.updateField)
 
   const handleEdit = (key, currentValue) => {
-    const newVal = window.prompt('Edit value:', currentValue)
+    const newVal = window.prompt(t('invoiceCard.editPrompt'), currentValue)
     if (newVal !== null && newVal !== currentValue) {
       updateField(uid, key, newVal)
     }
@@ -15,7 +17,7 @@ export default function InvoiceCard({ fields, schema, uid }) {
   if (!fields || Object.keys(fields).length === 0) {
     return (
       <div className="invoice-card card">
-        <div className="invoice-card-empty">No structured fields extracted for this document.</div>
+        <div className="invoice-card-empty">{t('invoiceCard.empty')}</div>
       </div>
     )
   }
@@ -28,8 +30,8 @@ export default function InvoiceCard({ fields, schema, uid }) {
   return (
     <div className="invoice-card card">
       <div className="invoice-card-header">
-        <h3>Extracted Fields</h3>
-        <span className="invoice-card-hint">Click a value to edit</span>
+        <h3>{t('invoiceCard.title')}</h3>
+        <span className="invoice-card-hint">{t('invoiceCard.hint')}</span>
       </div>
       <div className="invoice-fields">
         {orderedKeys.map(key => {
@@ -44,7 +46,7 @@ export default function InvoiceCard({ fields, schema, uid }) {
               <span
                 className="field-value"
                 onClick={() => handleEdit(key, field.value)}
-                title="Click to edit"
+                title={t('invoiceCard.hint')}
               >
                 {displayValue}
                 <Pencil size="12" className="field-edit-icon" />

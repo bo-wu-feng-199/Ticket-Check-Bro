@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next'
 import { useStats } from '../hooks/useStats.js'
 import { formatCurrency } from '../utils/formatHelper.js'
 import { BarChart3, DollarSign, Copy, AlertTriangle } from 'lucide-react'
 
 export default function StatsBar() {
+  const { t } = useTranslation()
   const stats = useStats()
 
   if (stats.totalFiles === 0) return null
@@ -11,7 +13,7 @@ export default function StatsBar() {
     <div className="stats-bar">
       <div className="stat-item">
         <BarChart3 size="14" />
-        <span>{stats.totalFiles} file{stats.totalFiles !== 1 ? 's' : ''}</span>
+        <span>{stats.totalFiles}{t('stats.files')}</span>
       </div>
       {stats.parsedCount > 0 && (
         <div className="stat-item">
@@ -22,19 +24,19 @@ export default function StatsBar() {
       {stats.pendingCount > 0 && (
         <div className="stat-item stat-warn">
           <AlertTriangle size="14" />
-          <span>{stats.pendingCount} processing</span>
+          <span>{stats.pendingCount} {t('stats.pending')}</span>
         </div>
       )}
       {stats.failedCount > 0 && (
         <div className="stat-item stat-error">
           <AlertTriangle size="14" />
-          <span>{stats.failedCount} failed</span>
+          <span>{stats.failedCount} {t('stats.failed')}</span>
         </div>
       )}
       {stats.duplicateCount > 0 && (
         <div className="stat-item stat-warn">
           <Copy size="14" />
-          <span>{stats.duplicateCount} dup{stats.duplicateCount !== 1 ? 's' : ''}</span>
+          <span>{stats.duplicateCount} {t('stats.duplicates')}</span>
         </div>
       )}
 

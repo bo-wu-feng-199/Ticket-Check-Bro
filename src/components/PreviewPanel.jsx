@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FileText, Image, Loader2 } from 'lucide-react'
 import { pdfjsLib } from '../core/extractor/PdfExtractor.js'
 import { getFile } from '../store/fileRefs.js'
 
 export default function PreviewPanel({ file }) {
+  const { t } = useTranslation()
   const canvasRef = useRef(null)
   const [pdfImageUrl, setPdfImageUrl] = useState(null)
   const [pdfLoading, setPdfLoading] = useState(false)
@@ -65,15 +67,15 @@ export default function PreviewPanel({ file }) {
   return (
     <div className="preview-panel card">
       <div className="preview-header">
-        <h3>Preview</h3>
-        {isProcessing && <span className="preview-processing">Processing...</span>}
-        {pdfLoading && <span className="preview-processing">Rendering PDF...</span>}
+        <h3>{t('preview.title')}</h3>
+        {isProcessing && <span className="preview-processing">{t('preview.processing')}</span>}
+        {pdfLoading && <span className="preview-processing">{t('preview.rendering')}</span>}
       </div>
       <div className="preview-content">
         {isProcessing ? (
           <div className="preview-placeholder">
             <div className="preview-spinner" />
-            <span>Extracting content...</span>
+            <span>{t('preview.extracting')}</span>
           </div>
         ) : isImage && imagePreviewUrl ? (
           <div className="preview-image-wrapper">
@@ -82,22 +84,22 @@ export default function PreviewPanel({ file }) {
         ) : isPdf && pdfImageUrl ? (
           <div className="preview-image-wrapper">
             <img src={pdfImageUrl} alt={fileName} className="preview-image" />
-            <div className="preview-pdf-note">Page 1 of document</div>
+            <div className="preview-pdf-note">{t('preview.page1')}</div>
           </div>
         ) : isPdf && pdfLoading ? (
           <div className="preview-placeholder">
             <Loader2 size="24" className="spin" />
-            <span>Rendering PDF page...</span>
+            <span>{t('preview.rendering')}</span>
           </div>
         ) : isPdf ? (
           <div className="preview-placeholder">
             <FileText size="32" opacity="0.3" />
-            <span>PDF preview unavailable</span>
+            <span>{t('preview.unavailable')}</span>
           </div>
         ) : (
           <div className="preview-placeholder">
             <Image size="32" opacity="0.3" />
-            <span>Preview unavailable</span>
+            <span>{t('preview.unavailable')}</span>
           </div>
         )}
       </div>

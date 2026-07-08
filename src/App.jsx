@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useInvoiceStore } from './store/invoiceStore.js'
 import Header from './components/Header.jsx'
 import DropZone from './components/DropZone.jsx'
@@ -5,11 +6,15 @@ import FilePanel from './components/FilePanel.jsx'
 import DetailPanel from './components/DetailPanel.jsx'
 import BottomBar from './components/BottomBar.jsx'
 import Footer from './components/Footer.jsx'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.js'
 import './App.css'
 
 export default function App() {
+  const { t } = useTranslation()
   const entries = useInvoiceStore(s => s.entries)
   const selectedUid = useInvoiceStore(s => s.selectedUid)
+
+  useKeyboardShortcuts()
 
   return (
     <div className="app-shell">
@@ -41,8 +46,8 @@ export default function App() {
                   <rect x="68" y="48" width="14" height="3" rx="1.5" fill="#E2E8F0"/>
                 </svg>
               </div>
-              <h3 className="empty-title">No document selected</h3>
-              <p className="empty-desc">Drop your files in the area above, then click any entry in the list to inspect its parsed fields.</p>
+              <h3 className="empty-title">{t('app.noDocument')}</h3>
+              <p className="empty-desc">{t('app.dropHint')}</p>
             </div>
           )}
         </section>

@@ -1,12 +1,15 @@
+import { useTranslation } from 'react-i18next'
 import FileActions from './FileActions.jsx'
 import FileList from './FileList.jsx'
 import StatsBar from './StatsBar.jsx'
 
 export default function FilePanel() {
+  const { t } = useTranslation()
+
   return (
     <div className="file-panel card">
       <div className="file-panel-header">
-        <h2>Documents</h2>
+        <h2>{t('filePanel.title')}</h2>
       </div>
       <FileActions />
       <FileList />

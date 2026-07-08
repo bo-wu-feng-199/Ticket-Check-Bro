@@ -16,9 +16,10 @@ import { getFile } from '../../store/fileRefs.js'
  * Merge all PDF entries into a single PDF and trigger download.
  *
  * @param {Array} entries  - Zustand store entries (in display order)
+ * @param {Object} [selectedPages] - Optional map of { [uid]: number[] } page indices (0-based) to include per file
  * @returns {Promise<{mergedCount: number, totalPages: number}>}
  */
-export async function mergePdfs(entries) {
+export async function mergePdfs(entries, selectedPages) {
   // ── 1. Filter to PDF-only, parsed entries ──
   const pdfEntries = entries.filter(e =>
     e.mimeType === 'application/pdf' || /\.pdf$/i.test(e.fileName)
@@ -51,13 +52,15 @@ export async function mergePdfs(entries) {
   let totalPages = 0
 
   for (const { entry, srcDoc } of srcDocs) {
-    const pageIndices = srcDoc.getPageIndices()
-    const copiedPages = await mergedPdf.copyPages(srcDoc, pageIndices)
+    const pages = (selectedPages && selectedPages[entry.uid])
+      ? selectedPages[entry.uid]
+      : srcDoc.getPageIndices()
+    const copiedPages = await mergedPdf.copyPages(srcDoc, pages)
 
     for (const page of copiedPages) {
       mergedPdf.addPage(page)
     }
-    totalPages += pageIndices.length
+    totalPages += pages.length
   }
 
   // ── 4. Generate and download ──

@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import JSZip from 'jszip'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { generateFilename } from '../core/renamer.js'
 import { getFile } from '../store/fileRefs.js'
@@ -32,6 +34,7 @@ function getExt(fileName) {
 }
 
 export default function BatchRenameModal({ onClose }) {
+  const { t } = useTranslation()
   const entries = useInvoiceStore(s => s.entries)
   const results = useInvoiceStore(s => s.results)
   const config = useInvoiceStore(s => s.config)
@@ -99,32 +102,35 @@ export default function BatchRenameModal({ onClose }) {
     })
   }
 
-  // ── Download all renamed files sequentially ──
+  // ── Download all renamed files as a single ZIP ──
   async function handleDownload() {
     setDownloading(true)
     setSuccessCount(0)
 
-    for (const row of previewRows) {
-      const file = getFile(row.uid)
-      if (!file) continue
+    try {
+      const zip = new JSZip()
+      let count = 0
 
-      // Create a Blob copy (avoids mutating the original File)
-      const blob = new Blob([await file.arrayBuffer()], { type: file.type })
+      for (const row of previewRows) {
+        const file = getFile(row.uid)
+        if (!file) continue
+        zip.file(row.newName, file.arrayBuffer())
+        count++
+      }
+
+      const blob = await zip.generateAsync({ type: 'blob' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = row.newName
+      a.download = 'renamed-files.zip'
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
-
-      setSuccessCount(prev => prev + 1)
-
-      // Small delay between downloads to let the browser queue them
-      await new Promise(r => setTimeout(r, 300))
-
-      // Revoke after a bit
       setTimeout(() => URL.revokeObjectURL(url), 3000)
+
+      setSuccessCount(count)
+    } catch (err) {
+      console.error('ZIP export failed:', err)
     }
 
     setDownloading(false)
@@ -141,7 +147,7 @@ export default function BatchRenameModal({ onClose }) {
       <div className="modal-card" onClick={e => e.stopPropagation()}>
         {/* ── Header ── */}
         <div className="modal-header">
-          <h2>Batch Rename Documents</h2>
+          <h2>{t('rename.title')}</h2>
           <button className="modal-close" onClick={handleClose}>
             <X size="18" />
           </button>
@@ -149,7 +155,7 @@ export default function BatchRenameModal({ onClose }) {
 
         {/* ── Template ── */}
         <div className="modal-section">
-          <label className="rename-label">Naming Template</label>
+          <label className="rename-label">{t('rename.template')}</label>
           <input
             className="rename-template-input"
             type="text"
@@ -159,7 +165,7 @@ export default function BatchRenameModal({ onClose }) {
             spellCheck={false}
           />
           <div className="rename-hint">
-            Use <code>{'{fieldKey}'}</code> placeholders. Click a chip below to insert.
+            {t('rename.hint')}
           </div>
         </div>
 
@@ -185,10 +191,10 @@ export default function BatchRenameModal({ onClose }) {
         <div className="modal-section preview-section">
           <div className="preview-header">
             <span className="preview-title">
-              Preview ({previewRows.length} files)
+              {t('rename.preview')} ({previewRows.length}{t('rename.files')})
               {nameCollisions.size > 0 && (
                 <span className="preview-warning">
-                  ⚠️ {nameCollisions.size} collision{nameCollisions.size > 1 ? 's' : ''}
+                  ⚠️ {nameCollisions.size}{t('rename.collision')}
                 </span>
               )}
             </span>
@@ -198,23 +204,23 @@ export default function BatchRenameModal({ onClose }) {
                 onClick={() => setTemplate(config.renameTemplate)}
               >
                 <RotateCcw size="12" />
-                Reset
+                {t('rename.reset')}
               </button>
             )}
           </div>
 
           {previewRows.length === 0 ? (
             <div className="preview-empty">
-              No parsed documents available. Parse at least one file first.
+              {t('rename.empty')}
             </div>
           ) : (
             <div className="preview-table-wrap">
               <table className="preview-table">
                 <thead>
                   <tr>
-                    <th>Original Name</th>
+                    <th>{t('rename.original')}</th>
                     <th></th>
-                    <th>New Name</th>
+                    <th>{t('rename.new')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -244,11 +250,11 @@ export default function BatchRenameModal({ onClose }) {
         <div className="modal-footer">
           {successCount > 0 && (
             <span className="download-success">
-              Downloaded {successCount} file{successCount !== 1 ? 's' : ''}
+              {t('rename.success')} {successCount}{t('rename.downloadSuccess')}
             </span>
           )}
           <button className="btn-cancel" onClick={handleClose}>
-            Cancel
+            {t('rename.cancel')}
           </button>
           <button
             className="btn-apply"
@@ -258,12 +264,12 @@ export default function BatchRenameModal({ onClose }) {
             {downloading ? (
               <>
                 <span className="btn-spinner" />
-                Downloading...
+                {t('rename.downloading')}
               </>
             ) : (
               <>
                 <Download size="16" />
-                Download Renamed ({previewRows.length})
+                {t('rename.download')} ({previewRows.length})
               </>
             )}
           </button>

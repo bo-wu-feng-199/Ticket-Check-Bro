@@ -38,6 +38,11 @@ export const DOCUMENT_TYPES = {
     id: 'toll_invoice',
     label: 'Toll Invoice',
     icon: 'Road'
+  },
+  english_invoice: {
+    id: 'english_invoice',
+    label: 'English Invoice',
+    icon: 'FileText'
   }
 }
 
@@ -118,6 +123,14 @@ export function getFieldSchema(typeId) {
       { key: 'tollStation',    label: 'Toll Station',    type: 'text',     width: 24 },
       { key: 'vehiclePlate',   label: 'License Plate',   type: 'text',     width: 14 },
       { key: 'amount',         label: 'Amount',          type: 'currency', width: 14 }
+    ],
+
+    english_invoice: [
+      { key: 'invoiceNumber',  label: 'Invoice Number',  type: 'text',     width: 18 },
+      { key: 'issueDate',      label: 'Issue Date',      type: 'date',     width: 14 },
+      { key: 'totalAmount',    label: 'Total Amount',    type: 'currency', width: 18 },
+      { key: 'companyName',    label: 'Company Name',    type: 'text',     width: 30 },
+      { key: 'taxAmount',      label: 'Tax Amount',      type: 'currency', width: 16 }
     ]
   }
 

@@ -1,8 +1,10 @@
 import { useCallback, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Upload, Lock } from 'lucide-react'
 import { useFileManager } from '../hooks/useFileManager.js'
 
 export default function DropZone() {
+  const { t } = useTranslation()
   const { addFiles } = useFileManager()
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef(null)
@@ -50,12 +52,12 @@ export default function DropZone() {
         <Upload size="28" className="dropzone-icon" />
       </div>
       <div className="dropzone-text">
-        <span className="dropzone-primary">Drop your documents here</span>
-        <span className="dropzone-secondary">or click to browse &mdash; PDF, JPG, JPEG, PNG</span>
+        <span className="dropzone-primary">{t('dropzone.primary')}</span>
+        <span className="dropzone-secondary">{t('dropzone.secondary')}</span>
       </div>
       <div className="dropzone-meta">
         <Lock size="12" />
-        <span>100% client-side</span>
+        <span>{t('dropzone.badge')}</span>
       </div>
       <input
         ref={inputRef}
