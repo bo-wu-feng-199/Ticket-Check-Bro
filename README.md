@@ -4,6 +4,16 @@
 [![Star History](https://img.shields.io/badge/Star%20History-Star%20History-FFD700?style=for-the-badge&logo=star&logoColor=white)](https://star-history.com/#bo-wu-feng-199/Ticket-Check-Bro&Date)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support-FF813F?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/bo.wu.feng.199)
 
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
+[![Zustand](https://img.shields.io/badge/Zustand-4-433E38?style=flat-square)](https://github.com/pmndrs/zustand)
+[![pdfjs-dist](https://img.shields.io/badge/pdfjs--dist-4-FD4F00?style=flat-square)](https://mozilla.github.io/pdf.js/)
+[![pdf-lib](https://img.shields.io/badge/pdf--lib-1.17-003D7A?style=flat-square)](https://pdf-lib.js.org/)
+[![Tesseract.js](https://img.shields.io/badge/Tesseract.js-5-00A859?style=flat-square)](https://tesseract.projectnaptha.com/)
+[![SheetJS](https://img.shields.io/badge/SheetJS-0.18-00A7E5?style=flat-square)](https://sheetjs.com/)
+[![Lucide](https://img.shields.io/badge/Lucide-0.468-F56565?style=flat-square)](https://lucide.dev/)
+[![PNPM](https://img.shields.io/badge/PNPM-9-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io)
+
 > Intelligent Document Intelligence Platform
 
 Parse invoices, receipts, and financial documents directly in your browser. Upload PDFs and images — the engine extracts structured fields, presents a human-readable summary, and exports everything to a unified spreadsheet.
