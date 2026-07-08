@@ -1,0 +1,49 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+labels: [bug]
+body:
+  - type: input
+    id: browser
+    attributes:
+      label: Browser & Version
+      placeholder: e.g., Chrome 125, Firefox 130
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      placeholder: 1. Upload a PDF invoice... 2. Click "Parse"... 3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: document-type
+    attributes:
+      label: Document Type
+      options:
+        - Value-Added Tax Invoice
+        - Train Ticket
+        - Flight Itinerary
+        - Vehicle Invoice
+        - Taxi Receipt
+        - Fixed-Amount Receipt
+        - Toll Invoice
+        - English Invoice
+        - Other / Unknown
+  - type: textarea
+    id: logs
+    attributes:
+      label: Browser Console Output
+      render: text

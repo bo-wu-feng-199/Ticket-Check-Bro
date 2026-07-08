@@ -1,6 +1,8 @@
 # Ticket-Check-Bro
 
 [![Live Demo](https://img.shields.io/badge/Try%20it%20live-Vercel-2563EB?style=for-the-badge&logo=vercel&logoColor=white)](https://ticket-check-bro.vercel.app/)
+[![Star History](https://img.shields.io/badge/Star%20History-Star%20History-FFD700?style=for-the-badge&logo=star&logoColor=white)](https://star-history.com/#bo-wu-feng-199/Ticket-Check-Bro&Date)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support-FF813F?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/bo.wu.feng.199)
 
 > Intelligent Document Intelligence Platform
 
@@ -120,6 +122,12 @@ git push origin main
 ```
 
 The Vercel project auto-detects the Vite framework. No additional configuration needed.
+
+---
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=bo-wu-feng-199/Ticket-Check-Bro&type=Date)](https://star-history.com/#bo-wu-feng-199/Ticket-Check-Bro&Date)
 
 ---
 
