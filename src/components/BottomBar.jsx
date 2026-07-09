@@ -5,7 +5,6 @@ import { exportToExcel } from '../core/exporter/ExcelExporter.js'
 import { Download, FileUp, Tag, CheckCircle2, Camera, Share2 } from 'lucide-react'
 import BatchRenameModal from './BatchRenameModal.jsx'
 import MergeModal from './MergeModal.jsx'
-import html2canvas from 'html2canvas'
 
 export default function BottomBar() {
   const { t, i18n } = useTranslation()
@@ -49,6 +48,8 @@ export default function BottomBar() {
       const el = document.querySelector('.app-shell')
       if (!el) throw new Error('App shell not found')
 
+      // Dynamic import: html2canvas only loaded when user clicks share
+      const html2canvas = (await import('html2canvas')).default
       const canvas = await html2canvas(el, { useCORS: true, scale: 2 })
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
 

@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import JSZip from 'jszip'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { generateFilename } from '../core/renamer.js'
 import { getFile } from '../store/fileRefs.js'
@@ -108,6 +107,8 @@ export default function BatchRenameModal({ onClose }) {
     setSuccessCount(0)
 
     try {
+      // Dynamic import: JSZip only loaded when user clicks download
+      const JSZip = (await import('jszip')).default
       const zip = new JSZip()
       let count = 0
 
