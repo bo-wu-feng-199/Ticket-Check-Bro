@@ -14,11 +14,11 @@
 [![Lucide](https://img.shields.io/badge/Lucide-0.468-F56565?style=flat-square)](https://lucide.dev/)
 [![PNPM](https://img.shields.io/badge/PNPM-9-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io)
 
-> Intelligent Document Intelligence Platform
+> Intelligent Document Intelligence Platform — Parse invoices, receipts, and financial documents in your browser.
 
-Parse invoices, receipts, and financial documents directly in your browser. Upload PDFs and images — the engine extracts structured fields, presents a human-readable summary, and exports everything to a unified spreadsheet.
+Upload PDFs and images — automatic document type detection, structured field extraction, spreadsheet export. **100% client-side. No server upload.** Supports Chinese & English invoices.
 
-**100% client-side. Your data never touches a server.**
+[⬆ v1.3.2](https://github.com/bo-wu-feng-199/Ticket-Check-Bro/releases) &mdash; 20 features, dark mode, i18n, PWA, responsive.
 
 ---
 
@@ -52,12 +52,24 @@ Parse invoices, receipts, and financial documents directly in your browser. Uplo
 |---|---|
 | **Multi-format ingestion** | PDF, JPG, JPEG, PNG via drag-and-drop |
 | **Dual extraction pipeline** | PDF text extraction (pdfjs-dist) + image OCR (Tesseract.js) |
-| **Schema-aware field recognition** | 7 document types, each with a dedicated strategy |
-| **Structured visualization** | Card-based detail panel with field-level rendering |
+| **8 document types** | VAT invoice, train/flight/taxi tickets, vehicle/fixed-amount/toll invoices, English invoices |
+| **Schema-aware field recognition** | 8 specialized parser strategies |
+| **Structured visualization** | Card-based detail panel with inline field editing |
 | **Bulk export** | Unified spreadsheet download (.xlsx) via SheetJS |
-| **PDF merge** | Combine multiple PDFs into a single document |
-| **Batch rename** | Template-driven file renaming using extracted metadata |
-| **Duplicate detection** | Content-aware hash comparison across the corpus |
+| **PDF merge** | Combine multiple PDFs with per-page selection |
+| **Batch rename** | Template-driven with variable chips + ZIP download |
+| **Duplicate detection** | Content-aware hash comparison |
+| **Drag-and-drop sort** | Reorder files for merge/export order |
+| **Multi-select & batch delete** | Checkboxes + select all |
+| **i18n** | Full Chinese & English UI |
+| **Dark mode** | CSS variables, system preference detection, persistent toggle |
+| **Keyboard shortcuts** | Ctrl+O (open), Delete/Backspace (remove), Ctrl+E (export) |
+| **Session persistence** | Auto save/restore via localStorage |
+| **Share screenshot** | html2canvas → clipboard + social share (Twitter/LinkedIn) |
+| **Demo data** | One-click sample invoices |
+| **PWA** | Installable, offline service worker |
+| **Responsive** | Desktop / tablet / phone with iOS safe-area |
+| **Privacy-first** | All processing in-browser, zero server upload |
 
 ### Supported Document Types
 
@@ -74,15 +86,17 @@ Parse invoices, receipts, and financial documents directly in your browser. Uplo
 ## Architecture
 
 ```
-Layer            │ Technology            │ Responsibility
-─────────────────┼───────────────────────┼─────────────────────────────
-Presentation     │ React 18 + Vite       │ Component tree, state, routing
-State            │ Zustand               │ Reactive store, derived stats
-PDF Engine       │ pdfjs-dist + pdf-lib  │ Text extraction + merge
-OCR Engine       │ Tesseract.js (WASM)   │ Image-to-text via LSTM models
-Parsing          │ Strategy Pattern      │ 7 specialized parser strategies
-Export           │ SheetJS (xlsx)        │ Spreadsheet generation
-Icons            │ Lucide React          │ Consistent SVG iconography
+Layer            │ Technology                     │ Responsibility
+─────────────────┼────────────────────────────────┼─────────────────────────────
+Presentation     │ React 18 + Vite 5              │ Component tree, state, routing
+State            │ Zustand                        │ Reactive store, derived stats
+PDF Engine       │ pdfjs-dist + pdf-lib           │ Text extraction + page merge
+OCR Engine       │ Tesseract.js (WASM)            │ Image-to-text via LSTM models
+Parsing          │ Strategy Pattern × 8           │ Document-type-specific parsers
+Export           │ SheetJS (xlsx)                 │ Spreadsheet generation
+i18n             │ react-i18next                  │ Chinese & English UI
+PWA              │ Service Worker                 │ Offline cache + installable
+Icons            │ Lucide React                   │ Consistent SVG iconography
 ```
 
 ### Data Pipeline
