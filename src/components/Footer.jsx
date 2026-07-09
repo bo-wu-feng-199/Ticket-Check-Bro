@@ -5,6 +5,15 @@ export default function Footer() {
 
   return (
     <footer className="footer">
+      <div className="footer-about">
+        <strong>{t('footer.aboutTitle')}</strong>
+        <p>{t('footer.aboutDesc')}</p>
+        <div className="footer-about-tags">
+          <span>{t('footer.aboutFree')}</span>
+          <span>{t('footer.aboutPrivate')}</span>
+          <span>{t('footer.aboutFast')}</span>
+        </div>
+      </div>
       <div className="footer-inner">
         <span className="footer-version">{t('footer.version')}</span>
         <span className="footer-sep">&middot;</span>
@@ -48,6 +57,38 @@ export default function Footer() {
           border-top: 1px solid var(--card-border);
           background: var(--card-bg);
         }
+        .footer-about {
+          padding: 24px 24px 0;
+          max-width: 600px;
+          margin: 0 auto;
+          text-align: center;
+        }
+        .footer-about strong {
+          font-size: 13px;
+          font-weight: 700;
+          color: var(--text-primary);
+        }
+        .footer-about p {
+          font-size: 12px;
+          color: var(--text-muted);
+          margin-top: 6px;
+          line-height: 1.5;
+        }
+        .footer-about-tags {
+          display: flex;
+          justify-content: center;
+          gap: 12px;
+          margin-top: 8px;
+          flex-wrap: wrap;
+        }
+        .footer-about-tags span {
+          font-size: 11px;
+          color: var(--text-secondary);
+          background: var(--bg-alt);
+          padding: 3px 10px;
+          border-radius: 100px;
+          font-weight: 500;
+        }
         .footer-inner {
           display: flex;
           align-items: center;
@@ -87,7 +128,10 @@ export default function Footer() {
           color: var(--text-secondary);
         }
         @media (max-width: 640px) {
+          .footer-about { padding: 20px 16px 0; }
+          .footer-about p { font-size: 11px; }
           .footer-stack, .footer-privacy { display: none; }
+          .footer-inner { padding: 10px 16px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
         }
       `}</style>
     </footer>

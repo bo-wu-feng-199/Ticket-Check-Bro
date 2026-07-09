@@ -172,8 +172,10 @@ export default function DropZone() {
         }
 
         @media (max-width: 640px) {
-          .dropzone { margin: 12px 16px 0; padding: 16px 18px; flex-wrap: wrap; }
+          .dropzone { margin: 8px 12px 0; padding: 14px 14px; flex-wrap: wrap; min-height: 80px; }
           .dropzone-meta { display: none; }
+          .dropzone-primary { font-size: 14px; }
+          .dropzone-secondary { font-size: 12px; }
         }
       `}</style>
     </div>

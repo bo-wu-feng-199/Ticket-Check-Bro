@@ -79,10 +79,15 @@
   "rename.success": "Downloaded",
   "rename.downloadSuccess": " files",
 
-  "footer.version": "v1.1.0",
+  "footer.version": "v1.3.1",
   "footer.tech": "Built with",
   "footer.license": "MIT License",
   "footer.privacy": "Your data never leaves your browser",
+  "footer.aboutTitle": "About Ticket Check Bro",
+  "footer.aboutDesc": "A free online document intelligence platform. Parse invoices, receipts, and financial documents in your browser — no server upload, 100% client-side.",
+  "footer.aboutFree": "Free to use",
+  "footer.aboutPrivate": "100% private",
+  "footer.aboutFast": "No installation",
 
   "error.mergeFail": "Need at least 2 PDFs to merge. Found only",
   "error.fileNotFound": "File not found:",

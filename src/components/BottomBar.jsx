@@ -289,11 +289,17 @@ export default function BottomBar() {
         }
 
         @media (max-width: 640px) {
-          .bottom-bar { flex-direction: column; align-items: stretch; }
+          .bottom-bar {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 12px 16px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+          }
           .bottom-bar-actions { flex-direction: column; }
           .bottom-bar-actions .btn-export,
           .bottom-bar-actions .btn-merge,
-          .bottom-bar-actions .btn-secondary { width: 100%; justify-content: center; }
+          .bottom-bar-actions .btn-secondary { width: 100%; justify-content: center; min-height: 50px; }
+          .btn-icon-only { min-height: 50px; }
         }
       `}</style>
     </div>

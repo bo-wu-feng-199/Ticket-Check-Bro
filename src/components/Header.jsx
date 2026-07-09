@@ -222,7 +222,10 @@ export default function Header() {
         @media (max-width: 640px) {
           .header-tagline { display: none; }
           .gh-badge { display: none; }
-          .header-inner { padding: 12px 16px; }
+          .header-gh-link span { display: none; }
+          .header-inner { padding: 10px 12px; gap: 8px; }
+          .header-title { font-size: 15px; }
+          .header-subtitle { display: none; }
         }
       `}</style>
     </header>

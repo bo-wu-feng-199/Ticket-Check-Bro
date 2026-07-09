@@ -79,10 +79,15 @@
   "rename.success": "已下载",
   "rename.downloadSuccess": "个文件",
 
-  "footer.version": "版本",
+  "footer.version": "v1.3.1",
   "footer.tech": "技术栈",
   "footer.license": "MIT 许可证",
   "footer.privacy": "你的数据不会离开浏览器",
+  "footer.aboutTitle": "关于 Ticket Check Bro",
+  "footer.aboutDesc": "免费在线文档智能解析平台。在浏览器中解析发票、收据和财务文档——无需上传服务器，100% 客户端运行。",
+  "footer.aboutFree": "免费使用",
+  "footer.aboutPrivate": "100% 隐私",
+  "footer.aboutFast": "无需安装",
 
   "error.mergeFail": "需要至少 2 个 PDF 文件才能合并。当前仅",
   "error.fileNotFound": "文件未找到：",
