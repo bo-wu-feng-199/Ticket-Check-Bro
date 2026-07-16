@@ -70,9 +70,10 @@ function SortableItem({ entry, index, isSelected, isImage, selectedUids, toggleS
   )
 }
 
-export default function FileList() {
+export default function FileList({ searchTerm = '' }) {
   const { t } = useTranslation()
   const entries = useInvoiceStore(s => s.entries)
+  const results = useInvoiceStore(s => s.results)
   const selectedUid = useInvoiceStore(s => s.selectedUid)
   const selectEntry = useInvoiceStore(s => s.selectEntry)
   const moveEntry = useInvoiceStore(s => s.moveEntry)
@@ -118,11 +119,46 @@ export default function FileList() {
     )
   }
 
+  const filteredEntries = searchTerm
+    ? entries.filter(e =>
+        e.fileName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        results[e.uid]?.fields?.invoiceNumber?.value?.includes(searchTerm) ||
+        results[e.uid]?.fields?.totalAmount?.value?.includes(searchTerm)
+      )
+    : entries
+
+  if (filteredEntries.length === 0) {
+    return (
+      <div className="file-list-empty">
+        <FileText size="24" opacity="0.3" />
+        <p>No results</p>
+        <p className="file-list-hint">Try a different search term</p>
+
+        <style>{`
+          .file-list-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            gap: 8px;
+            padding: 40px 20px;
+          }
+          .file-list-hint {
+            font-size: 12px;
+            opacity: 0.7;
+          }
+        `}</style>
+      </div>
+    )
+  }
+
   return (
     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={entries.map(e => e.uid)} strategy={verticalListSortingStrategy}>
+      <SortableContext items={filteredEntries.map(e => e.uid)} strategy={verticalListSortingStrategy}>
         <div className="file-list">
-          {entries.map((entry, index) => {
+          {filteredEntries.map((entry, index) => {
             const isSelected = entry.uid === selectedUid
             const isImage = entry.mimeType?.startsWith('image/')
             return (

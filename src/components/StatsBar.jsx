@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useStats } from '../hooks/useStats.js'
 import { formatCurrency } from '../utils/formatHelper.js'
-import { BarChart3, DollarSign, Copy, AlertTriangle } from 'lucide-react'
+import { BarChart3, DollarSign, Copy, AlertTriangle, FileText } from 'lucide-react'
 
 export default function StatsBar() {
   const { t } = useTranslation()
@@ -15,6 +15,12 @@ export default function StatsBar() {
         <BarChart3 size="14" />
         <span>{stats.totalFiles}{t('stats.files')}</span>
       </div>
+      {stats.parsedCount > 0 && (
+        <div className="stat-item">
+          <FileText size="14" />
+          <span>{stats.documentTypeBreakdown}</span>
+        </div>
+      )}
       {stats.parsedCount > 0 && (
         <div className="stat-item">
           <DollarSign size="14" />

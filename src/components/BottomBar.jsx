@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { exportToExcel } from '../core/exporter/ExcelExporter.js'
+import { exportToCsv } from '../core/exporter/CsvExporter.js'
+import { exportToJson } from '../core/exporter/JsonExporter.js'
 import { Download, FileUp, Tag, CheckCircle2, Camera, Share2 } from 'lucide-react'
 import BatchRenameModal from './BatchRenameModal.jsx'
 import MergeModal from './MergeModal.jsx'
@@ -18,6 +20,7 @@ export default function BottomBar() {
   const [showMergeModal, setShowMergeModal] = useState(false)
   const [shareState, setShareState] = useState(null) // null | 'loading' | 'success'
   const [showShareMenu, setShowShareMenu] = useState(false)
+  const [showExportMenu, setShowExportMenu] = useState(false)
 
   // Click away to close share menu
   useEffect(() => {
@@ -28,6 +31,16 @@ export default function BottomBar() {
     document.addEventListener('click', handler)
     return () => document.removeEventListener('click', handler)
   }, [showShareMenu])
+
+  // Click away to close export menu
+  useEffect(() => {
+    if (!showExportMenu) return
+    const handler = (e) => {
+      if (!e.target.closest('.export-menu-wrap')) setShowExportMenu(false)
+    }
+    document.addEventListener('click', handler)
+    return () => document.removeEventListener('click', handler)
+  }, [showExportMenu])
 
   const APP_URL = 'https://ticket-check-bro.vercel.app/'
   const SHARE_TEXT = encodeURIComponent('Check out Ticket-Check-Bro — free online invoice parser & data extraction tool. No server upload, 100% private.')
@@ -114,14 +127,28 @@ export default function BottomBar() {
           {t('bottomBar.rename')}
           {parsedCount >= 1 && <span className="btn-badge">{parsedCount}</span>}
         </button>
-        <button
-          className="btn-export"
-          onClick={handleExport}
-          disabled={parsedCount === 0}
-        >
-          <Download size="16" />
-          {t('bottomBar.export')}
-        </button>
+        <div className="export-menu-wrap">
+          <button className="btn-export" onClick={() => setShowExportMenu(prev => !prev)} disabled={parsedCount === 0}>
+            <Download size="16" />
+            {t('bottomBar.export')}
+          </button>
+          {showExportMenu && (
+            <div className="share-menu-dropdown">
+              <div className="share-menu-item" onClick={() => { exportToExcel(entries, results); setShowExportMenu(false) }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Excel (.xlsx)
+              </div>
+              <div className="share-menu-item" onClick={() => { exportToCsv(entries, results); setShowExportMenu(false) }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                CSV (.csv)
+              </div>
+              <div className="share-menu-item" onClick={() => { exportToJson(entries, results); setShowExportMenu(false) }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                JSON (.json)
+              </div>
+            </div>
+          )}
+        </div>
         <button
           className="btn-secondary"
           onClick={handleShare}
@@ -183,6 +210,7 @@ export default function BottomBar() {
         .bottom-bar-sep { opacity: 0.3; }
         .bottom-bar-ready { color: var(--success); font-weight: 500; }
         .bottom-bar-actions { display: flex; gap: 8px; }
+        .export-menu-wrap { position: relative; }
 
         .btn-export,
         .btn-merge,

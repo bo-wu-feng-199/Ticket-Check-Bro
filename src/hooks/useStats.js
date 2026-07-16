@@ -22,6 +22,16 @@ export function useStats() {
       return sum + (isNaN(val) ? 0 : val)
     }, 0)
 
+    // Document type breakdown
+    const docTypeCount = {}
+    parsed.forEach(e => {
+      const dt = results[e.uid]?.documentType || 'unknown'
+      docTypeCount[dt] = (docTypeCount[dt] || 0) + 1
+    })
+    const documentTypeBreakdown = Object.entries(docTypeCount)
+      .map(([type, count]) => `${type}: ${count}`)
+      .join(', ')
+
     const dupInfo = detectDuplicates(results)
 
     return {
@@ -30,7 +40,8 @@ export function useStats() {
       pendingCount: pending.length,
       failedCount: failed.length,
       totalAmount,
-      duplicateCount: dupInfo.duplicateCount
+      duplicateCount: dupInfo.duplicateCount,
+      documentTypeBreakdown
     }
   }, [entries, results])
 }
