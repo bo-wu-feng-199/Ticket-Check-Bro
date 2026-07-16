@@ -38,6 +38,7 @@
   "invoiceCard.hint": "点击值进行编辑",
   "invoiceCard.empty": "该文档未提取到结构化字段",
   "invoiceCard.editPrompt": "编辑值：",
+  "invoiceCard.confidence": "置信度",
 
   "preview.title": "预览",
   "preview.processing": "处理中...",

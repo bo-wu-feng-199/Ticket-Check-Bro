@@ -60,8 +60,8 @@ export function useFileManager() {
     // Store file references for PDF preview rendering
     validEntries.forEach(e => setFile(e.uid, e.file))
 
-    // Process each file asynchronously
-    for (const entry of validEntries) {
+    // Process a single file entry
+    const processFile = async (entry) => {
       try {
         const method = getExtractionMethod(entry.file)
 
@@ -95,6 +95,22 @@ export function useFileManager() {
         setParseError(entry.uid, err.message || 'Extraction failed')
       }
     }
+
+    // Process entries with concurrency limit
+    async function processBatch(entries, concurrency = 4) {
+      const queue = [...entries]
+      async function worker() {
+        while (queue.length > 0) {
+          const entry = queue.shift()
+          await processFile(entry)
+        }
+      }
+      await Promise.all(
+        Array.from({ length: Math.min(concurrency, entries.length) }, () => worker())
+      )
+    }
+
+    await processBatch(validEntries)
   }, [addEntries, updateEntryStatus, setResult, setParseError])
 
   const retryFile = useCallback(async (uid) => {

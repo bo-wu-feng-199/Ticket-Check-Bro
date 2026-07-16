@@ -38,6 +38,7 @@
   "invoiceCard.hint": "Click a value to edit",
   "invoiceCard.empty": "No structured fields extracted for this document.",
   "invoiceCard.editPrompt": "Edit value:",
+  "invoiceCard.confidence": "Confidence",
 
   "preview.title": "Preview",
   "preview.processing": "Processing...",

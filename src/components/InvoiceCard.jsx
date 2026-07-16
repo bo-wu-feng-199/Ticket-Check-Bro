@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useInvoiceStore } from '../store/invoiceStore.js'
-import { formatFieldValue } from '../utils/formatHelper.js'
+import { formatFieldValue, normalizeFieldValue } from '../utils/formatHelper.js'
 import { Pencil } from 'lucide-react'
 
 export default function InvoiceCard({ fields, schema, uid }) {
@@ -38,19 +38,30 @@ export default function InvoiceCard({ fields, schema, uid }) {
           const field = fields[key]
           if (!field) return null
           const schemaField = schema?.find(s => s.key === key)
-          const displayValue = formatFieldValue(field.value, schemaField?.type || 'text')
+          const normalizedField = normalizeFieldValue(field, schemaField)
+          const displayValue = formatFieldValue(normalizedField.numeric ?? normalizedField.value, schemaField?.type || 'text')
+          const confidence = field.confidence
+          const isLowConfidence = confidence !== undefined && confidence < 0.6
 
           return (
             <div key={key} className="field-row">
               <span className="field-label">{field.label}</span>
-              <span
-                className="field-value"
-                onClick={() => handleEdit(key, field.value)}
-                title={t('invoiceCard.hint')}
-              >
-                {displayValue}
-                <Pencil size="12" className="field-edit-icon" />
-              </span>
+              <div className="field-value-area">
+                <span
+                  className={`field-value${isLowConfidence ? ' field-confidence-low' : ''}`}
+                  onClick={() => handleEdit(key, field.value)}
+                  title={isLowConfidence ? `${t('invoiceCard.confidence')}: ${(confidence * 100).toFixed(0)}%` : t('invoiceCard.hint')}
+                >
+                  {displayValue}
+                  {isLowConfidence && <span className="confidence-dot" />}
+                  <Pencil size="12" className="field-edit-icon" />
+                </span>
+                {isLowConfidence && (
+                  <div className="confidence-bar-track">
+                    <div className="confidence-bar-fill" style={{ width: `${confidence * 100}%` }} />
+                  </div>
+                )}
+              </div>
             </div>
           )
         })}
@@ -124,6 +135,38 @@ export default function InvoiceCard({ fields, schema, uid }) {
         }
         .field-value:hover .field-edit-icon {
           opacity: 0.5;
+        }
+        .field-value-area {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 2px;
+          min-width: 0;
+          flex: 1;
+        }
+        .field-confidence-low {
+          font-weight: 400;
+        }
+        .field-confidence-low .confidence-dot {
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          background: #f59e0b;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+        .confidence-bar-track {
+          width: 100%;
+          height: 3px;
+          background: #e5e7eb;
+          border-radius: 2px;
+          overflow: hidden;
+        }
+        .confidence-bar-fill {
+          height: 100%;
+          background: #f59e0b;
+          border-radius: 2px;
+          transition: width 0.3s ease;
         }
       `}</style>
     </div>

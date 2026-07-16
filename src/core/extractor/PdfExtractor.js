@@ -19,7 +19,7 @@ export { pdfjsLib }
 
 /**
  * Extract text content from a PDF File object.
- * Reads the first 3 pages to balance thoroughness vs performance.
+ * Reads all pages to ensure no data is missed.
  *
  * @param {File} file - PDF File object
  * @returns {Promise<string>} Extracted text content
@@ -28,7 +28,7 @@ export async function extractPdfText(file) {
   const arrayBuffer = await file.arrayBuffer()
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
 
-  const pageCount = Math.min(pdf.numPages, 3)
+  const pageCount = pdf.numPages
   const pages = []
 
   for (let i = 1; i <= pageCount; i++) {

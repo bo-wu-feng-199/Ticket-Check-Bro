@@ -42,7 +42,12 @@ export function exportToExcel(entries, results, filename = 'ticket-check-bro-exp
     // Add schema fields
     for (const field of schema) {
       const fv = fields[field.key]
-      row[field.label] = fv ? String(fv.value) : ''
+      if (fv) {
+        // Use numeric value for currency fields so Excel treats them as numbers
+        row[field.label] = fv.numeric !== undefined ? fv.numeric : String(fv.value)
+      } else {
+        row[field.label] = ''
+      }
     }
 
     return row
