@@ -1,7 +1,7 @@
 {
   "name": "ticket-check-bro",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.4.1",
   "type": "module",
   "description": "Intelligent Document Intelligence Platform — parse invoices, receipts, and financial documents in-browser. Upload PDFs & images, extract structured fields, export to spreadsheet. Zero-server, fully client-side.",
   "keywords": [
@@ -14,11 +14,11 @@
     "react",
     "vite"
   ],
-  "author": "absolutelyZero",
+  "author": "bo-wu-feng-199",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/absolutelyZero/Ticket-Check-Bro.git"
+    "url": "https://github.com/bo-wu-feng-199/Ticket-Check-Bro.git"
   },
   "scripts": {
     "dev": "vite",

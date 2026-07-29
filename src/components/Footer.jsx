@@ -44,7 +44,7 @@ export default function Footer() {
           </span>
         </span>
         <span className="footer-sep">&middot;</span>
-        <a href="https://github.com/absolutelyZero/Ticket-Check-Bro/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/bo-wu-feng-199/Ticket-Check-Bro/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
           {t('footer.license')}
         </a>
         <span className="footer-sep">&middot;</span>
