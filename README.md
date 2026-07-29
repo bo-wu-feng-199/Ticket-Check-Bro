@@ -18,7 +18,7 @@
 
 Upload PDFs and images — automatic document type detection, structured field extraction, spreadsheet export. **100% client-side. No server upload.** Supports Chinese & English invoices.
 
-[⬆ v1.3.2](https://github.com/bo-wu-feng-199/Ticket-Check-Bro/releases) &mdash; 20 features, dark mode, i18n, PWA, responsive.
+[⬆ v1.4.1](https://github.com/bo-wu-feng-199/Ticket-Check-Bro/releases) &mdash; 20 features, dark mode, i18n, PWA, responsive.
 
 ---
 
