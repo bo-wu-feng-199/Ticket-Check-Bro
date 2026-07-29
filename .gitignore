@@ -9,3 +9,6 @@ dev-dist/
 
 # Allow README screenshots
 !docs/screenshots/*.png
+
+# Vite timestamp files
+vite.config.js.timestamp-*
