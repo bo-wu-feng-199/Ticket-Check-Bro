@@ -32,6 +32,31 @@ class ParserFactory {
   }
 
   /**
+   * Register a custom parser class.
+   * The class must extend InvoiceParser and implement typeId, label,
+   * confidence(text), and parse(text).
+   *
+   * @param {new () => import('./InvoiceParser.js').default} ParserClass
+   * @example
+   * import { parserFactory } from '@ticket-check-bro/core'
+   * import MyCustomParser from './MyCustomParser.js'
+   * parserFactory.register(MyCustomParser)
+   */
+  register(ParserClass) {
+    const instance = new ParserClass()
+    // Remove existing parser with same typeId if any (allows override)
+    this._parsers = this._parsers.filter(p => p.typeId !== instance.typeId)
+    this._parsers.push(instance)
+  }
+
+  /**
+   * Remove a parser by typeId.
+   */
+  unregister(typeId) {
+    this._parsers = this._parsers.filter(p => p.typeId !== typeId)
+  }
+
+  /**
    * Detect the best-matching document type and parse the text.
    * Delegates to each parser's analyze() which handles text normalization.
    */
