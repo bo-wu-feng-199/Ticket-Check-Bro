@@ -1,0 +1,13 @@
+{
+  "documentType": "common_invoice",
+  "fields": {
+    "invoiceCode": { "label": "Invoice Code", "value": "3100223344" },
+    "invoiceNumber": { "label": "Invoice Number", "value": "20250315000000123456" },
+    "issueDate": { "label": "Issue Date", "value": "2025-03-15" },
+    "buyerName": { "label": "Buyer Name", "value": "深圳科技有限公司" },
+    "sellerName": { "label": "Seller Name", "value": "上海贸易有限公司" },
+    "amount": { "label": "Amount (excl. Tax)", "value": "25225.23" },
+    "taxAmount": { "label": "Tax Amount", "value": "2774.77" },
+    "totalAmount": { "label": "Total Amount", "value": "28000.00" }
+  }
+}

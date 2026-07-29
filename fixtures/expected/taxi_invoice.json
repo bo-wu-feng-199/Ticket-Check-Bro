@@ -1,0 +1,10 @@
+{
+  "documentType": "taxi_invoice",
+  "fields": {
+    "companyName": { "label": "Company Name", "value": "广州市白云出租汽车集团有限公司" },
+    "licensePlate": { "label": "License Plate", "value": "粤A88888" },
+    "date": { "label": "Date", "value": "2025-03-20" },
+    "time": { "label": "Time", "value": "14:30" },
+    "amount": { "label": "Amount", "value": "45.00" }
+  }
+}

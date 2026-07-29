@@ -1,0 +1,13 @@
+{
+  "documentType": "train_ticket",
+  "fields": {
+    "trainNumber": { "label": "Train Number", "value": "G1234" },
+    "origin": { "label": "Origin Station", "value": "深圳北" },
+    "destination": { "label": "Destination", "value": "广州南" },
+    "departureDate": { "label": "Departure Date", "value": "2025-03-20" },
+    "departureTime": { "label": "Departure Time", "value": "08:30" },
+    "seatType": { "label": "Seat Type", "value": "二等座" },
+    "passengerName": { "label": "Passenger Name", "value": "李小明" },
+    "amount": { "label": "Amount", "value": "249.50" }
+  }
+}

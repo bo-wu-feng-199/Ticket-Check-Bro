@@ -1,0 +1,11 @@
+{
+  "documentType": "toll_invoice",
+  "fields": {
+    "invoiceCode": { "label": "Invoice Code", "value": "244012345678" },
+    "invoiceNumber": { "label": "Invoice Number", "value": "20250601000000123456" },
+    "issueDate": { "label": "Issue Date", "value": "2025-06-01" },
+    "tollStation": { "label": "Toll Station", "value": "广州收费站" },
+    "vehiclePlate": { "label": "License Plate", "value": "粤B12345" },
+    "amount": { "label": "Amount", "value": "68.00" }
+  }
+}

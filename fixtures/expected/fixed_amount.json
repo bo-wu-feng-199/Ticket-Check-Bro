@@ -1,0 +1,10 @@
+{
+  "documentType": "fixed_amount",
+  "fields": {
+    "receiptCode": { "label": "Receipt Code", "value": "244002345678" },
+    "receiptNumber": { "label": "Receipt Number", "value": "12345678" },
+    "issueDate": { "label": "Issue Date", "value": "2025-05-01" },
+    "issuerName": { "label": "Issuer Name", "value": "广州天河某餐饮店" },
+    "amount": { "label": "Amount", "value": "100.00" }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "documentType": "flight_ticket",
+  "fields": {
+    "flightNumber": { "label": "Flight Number", "value": "CA1234" },
+    "airlineName": { "label": "Airline", "value": "中国国航" },
+    "origin": { "label": "Departure", "value": "北京" },
+    "destination": { "label": "Arrival", "value": "广州" },
+    "departureDate": { "label": "Departure Date", "value": "2025-04-10" },
+    "passengerName": { "label": "Passenger", "value": "王芳" },
+    "ticketNumber": { "label": "Ticket No.", "value": "9991234567890" },
+    "amount": { "label": "Amount", "value": "1,280.00" }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "documentType": "vehicle_invoice",
+  "fields": {
+    "invoiceCode": { "label": "Invoice Code", "value": "4400234567" },
+    "invoiceNumber": { "label": "Invoice Number", "value": "2025040100000098765" },
+    "issueDate": { "label": "Issue Date", "value": "2025-04-01" },
+    "buyerName": { "label": "Buyer Name", "value": "张小强" },
+    "vehicleModel": { "label": "Vehicle Model", "value": "BYD7005BEV" },
+    "vin": { "label": "VIN", "value": "LC0C14C45R1001234" },
+    "engineNumber": { "label": "Engine No.", "value": "12345678" },
+    "totalAmount": { "label": "Total Amount", "value": "159800.00" }
+  }
+}

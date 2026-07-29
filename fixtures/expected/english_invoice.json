@@ -1,0 +1,9 @@
+{
+  "documentType": "english_invoice",
+  "fields": {
+    "invoiceNumber": { "label": "Invoice Number", "value": "INV-2025-0891" },
+    "issueDate": { "label": "Issue Date", "value": "06-15-2025" },
+    "totalAmount": { "label": "Total Amount", "value": "$5,200.00" },
+    "companyName": { "label": "Company Name", "value": "ABC Corp Ltd" }
+  }
+}
