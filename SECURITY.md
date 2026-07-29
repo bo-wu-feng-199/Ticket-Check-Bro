@@ -23,4 +23,4 @@ This project runs **100% client-side in the browser**. No server-side code is in
 - Third-party CDN dependencies (loaded via preconnect)
 - localStorage-based session persistence
 
-See [PRIVACY.md](./PRIVACY.md) for data handling details.
+See [PRIVACY.md](./PRIVACY.md) for a detailed data handling and threat model analysis.
