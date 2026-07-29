@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest'
-import { formatFieldValue, normalizeFieldValue, formatCurrency, sanitizeFilename } from '../src/utils/formatHelper.js'
+import { formatFieldValue, normalizeFieldValue, formatCurrency, sanitizeFilename } from '@ticket-check-bro/core'
 
 describe('formatCurrency', () => {
   test('formats number with ¥ and commas', () => {

@@ -1,0 +1,12 @@
+{
+  "name": "@ticket-check-bro/core",
+  "version": "1.4.1",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "description": "Core parser engine for Ticket-Check-Bro — extract structured data from invoices and receipts",
+  "license": "MIT",
+  "author": "bo-wu-feng-199"
+}

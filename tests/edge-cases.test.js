@@ -1,4 +1,4 @@
-import parserFactory from '../src/core/parser/index.js'
+import parserFactory from '@ticket-check-bro/core'
 
 describe('Edge Cases', () => {
   test('empty text returns null', () => {

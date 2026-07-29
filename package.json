@@ -20,12 +20,14 @@
     "type": "git",
     "url": "https://github.com/bo-wu-feng-199/Ticket-Check-Bro.git"
   },
+  "workspaces": ["packages/core"],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:core": "cd packages/core && echo 'No build step needed — package is pure ESM'"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",

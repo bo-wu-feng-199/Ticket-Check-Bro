@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import parserFactory from '../src/core/parser/index.js'
+import parserFactory from '@ticket-check-bro/core'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const FIXTURES = join(__dirname, '..', 'fixtures')
