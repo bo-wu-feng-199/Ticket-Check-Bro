@@ -66,6 +66,7 @@
   "bottomBar.layoutGenerate": "生成排版 PDF",
   "bottomBar.layoutPerPage": "张/页",
   "bottomBar.layoutHint": "每张发票首页按网格排布到 A4 页面，保留矢量内容。",
+  "bottomBar.layoutPrintPrompt": "PDF 已生成，立即打印？",
   "bottomBar.rename": "批量重命名",
   "bottomBar.export": "导出 Excel",
 

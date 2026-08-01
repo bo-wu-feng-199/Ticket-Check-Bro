@@ -65,7 +65,8 @@
   "bottomBar.mergeLayout": "Layout Merge",
   "bottomBar.layoutGenerate": "Generate Layout PDF",
   "bottomBar.layoutPerPage": "per page",
-  "bottomBar.layoutHint": "Each invoice's first page is placed into a grid cell on A4 pages. Vector content is preserved.",
+  "bottomBar.layoutHint": "Each invoice.s first page is placed into a grid cell on A4 pages. Vector content is preserved.",
+  "bottomBar.layoutPrintPrompt": "PDF generated. Print it now?",
   "bottomBar.rename": "Batch Rename",
   "bottomBar.export": "Export to Excel",
 

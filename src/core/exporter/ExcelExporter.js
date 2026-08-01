@@ -9,6 +9,7 @@
 
 import * as XLSX from 'xlsx'
 import { getFieldSchema, DOCUMENT_TYPES } from '../../data/schemas.js'
+import { detectDuplicates } from '../deduplicator.js'
 
 /**
  * Export parsed invoice data to a .xlsx file and trigger download.
@@ -25,6 +26,9 @@ export function exportToExcel(entries, results, filename = 'ticket-check-bro-exp
     alert('No parsed documents to export.')
     return
   }
+
+  // Detect duplicates to highlight in yellow
+  const { duplicates: duplicateUids } = detectDuplicates(results)
 
   // Build rows for the spreadsheet
   const rows = parsed.map(entry => {
@@ -66,6 +70,23 @@ export function exportToExcel(entries, results, filename = 'ticket-check-bro-exp
     return { wch: Math.min(Math.max(maxLen + 2, 12), 40) }
   })
   ws['!cols'] = colWidths
+
+  // Highlight duplicate rows in yellow
+  if (duplicateUids.length > 0) {
+    const headerKeys = Object.keys(rows[0])
+    parsed.forEach((entry, rowIdx) => {
+      if (!duplicateUids.includes(entry.uid)) return
+      const excelRow = rowIdx + 2 // 1-based, +1 for header
+      headerKeys.forEach((key, colIdx) => {
+        const cellAddr = XLSX.utils.encode_cell({ r: excelRow - 1, c: colIdx })
+        if (!ws[cellAddr]) return
+        ws[cellAddr].s = {
+          fill: { fgColor: { rgb: 'FFFF00' } },
+          font: { color: { rgb: '000000' } }
+        }
+      })
+    })
+  }
 
   XLSX.utils.book_append_sheet(wb, ws, 'Documents')
 

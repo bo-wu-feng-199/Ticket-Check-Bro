@@ -107,5 +107,37 @@ export async function layoutMergePdfs(entries, layoutId) {
   document.body.removeChild(a)
   setTimeout(() => URL.revokeObjectURL(url), 2000)
 
-  return { mergedCount: srcDocs.length, totalPages: Math.ceil(srcDocs.length / cellsPerPage) }
+  return { mergedCount: srcDocs.length, totalPages: Math.ceil(srcDocs.length / cellsPerPage), blob }
+}
+
+/**
+ * Print a generated layout PDF blob in a new window/tab.
+ * Opens the blob in a hidden iframe and calls print().
+ * @param {Blob} blob - PDF blob from layoutMergePdfs
+ */
+export function printBlob(blob) {
+  const url = URL.createObjectURL(blob)
+  const iframe = document.createElement('iframe')
+  iframe.style.position = 'fixed'
+  iframe.style.right = '0'
+  iframe.style.bottom = '0'
+  iframe.style.width = '0'
+  iframe.style.height = '0'
+  iframe.style.border = '0'
+  iframe.src = url
+  document.body.appendChild(iframe)
+  iframe.onload = () => {
+    setTimeout(() => {
+      try {
+        iframe.contentWindow.focus()
+        iframe.contentWindow.print()
+      } catch (err) {
+        console.error('Print failed:', err)
+      }
+    }, 300)
+  }
+  setTimeout(() => {
+    document.body.removeChild(iframe)
+    URL.revokeObjectURL(url)
+  }, 120000)
 }

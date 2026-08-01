@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { getFile } from '../store/fileRefs.js'
 import { mergePdfs } from '../core/exporter/PdfMerger.js'
-import { layoutMergePdfs, LAYOUT_PRESETS } from '../core/exporter/LayoutMerger.js'
+import { layoutMergePdfs, LAYOUT_PRESETS, printBlob } from '../core/exporter/LayoutMerger.js'
 import { PDFDocument } from 'pdf-lib'
 import { X, FileUp, CheckSquare, Square } from 'lucide-react'
 
@@ -89,7 +89,11 @@ export default function MergeModal({ onClose }) {
   async function handleLayoutMerge() {
     setMerging(true)
     try {
-      await layoutMergePdfs(entries, layoutId)
+      const { blob } = await layoutMergePdfs(entries, layoutId)
+      // Show print prompt after successful generation
+      if (blob && window.confirm(t('bottomBar.layoutPrintPrompt'))) {
+        printBlob(blob)
+      }
       onClose()
     } catch (err) {
       console.error('Layout merge failed:', err)
