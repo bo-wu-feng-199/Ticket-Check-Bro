@@ -61,6 +61,11 @@
   "bottomBar.none": "No parsed documents",
   "bottomBar.merge": "Merge PDFs",
   "bottomBar.mergeTooltip": "Need at least 2 PDFs (found",
+  "bottomBar.mergeStandard": "Standard Merge",
+  "bottomBar.mergeLayout": "Layout Merge",
+  "bottomBar.layoutGenerate": "Generate Layout PDF",
+  "bottomBar.layoutPerPage": "per page",
+  "bottomBar.layoutHint": "Each invoice's first page is placed into a grid cell on A4 pages. Vector content is preserved.",
   "bottomBar.rename": "Batch Rename",
   "bottomBar.export": "Export to Excel",
 

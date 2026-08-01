@@ -61,6 +61,11 @@
   "bottomBar.none": "暂无解析文档",
   "bottomBar.merge": "合并 PDF",
   "bottomBar.mergeTooltip": "至少需要 2 个 PDF 文件（当前",
+  "bottomBar.mergeStandard": "普通合并",
+  "bottomBar.mergeLayout": "排版合并",
+  "bottomBar.layoutGenerate": "生成排版 PDF",
+  "bottomBar.layoutPerPage": "张/页",
+  "bottomBar.layoutHint": "每张发票首页按网格排布到 A4 页面，保留矢量内容。",
   "bottomBar.rename": "批量重命名",
   "bottomBar.export": "导出 Excel",
 

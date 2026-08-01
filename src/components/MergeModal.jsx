@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { getFile } from '../store/fileRefs.js'
 import { mergePdfs } from '../core/exporter/PdfMerger.js'
+import { layoutMergePdfs, LAYOUT_PRESETS } from '../core/exporter/LayoutMerger.js'
 import { PDFDocument } from 'pdf-lib'
 import { X, FileUp, CheckSquare, Square } from 'lucide-react'
 
@@ -13,6 +14,8 @@ export default function MergeModal({ onClose }) {
   const [selectedPages, setSelectedPages] = useState(null) // { [uid]: number[] }
   const [loading, setLoading] = useState(true)
   const [merging, setMerging] = useState(false)
+  const [mode, setMode] = useState('standard')
+  const [layoutId, setLayoutId] = useState('2x2')
 
   const pdfEntries = useMemo(() =>
     entries.filter(e =>
@@ -20,6 +23,10 @@ export default function MergeModal({ onClose }) {
     ),
     [entries]
   )
+
+  const layout = LAYOUT_PRESETS.find(p => p.id === layoutId) || LAYOUT_PRESETS[2]
+  const cellsPerPage = layout.cols * layout.rows
+  const layoutPageCount = Math.max(1, Math.ceil(pdfEntries.length / cellsPerPage))
 
   useEffect(() => {
     ;(async () => {
@@ -79,6 +86,18 @@ export default function MergeModal({ onClose }) {
     setMerging(false)
   }
 
+  async function handleLayoutMerge() {
+    setMerging(true)
+    try {
+      await layoutMergePdfs(entries, layoutId)
+      onClose()
+    } catch (err) {
+      console.error('Layout merge failed:', err)
+      alert(t('bottomBar.mergeFail') + err.message)
+    }
+    setMerging(false)
+  }
+
   const totalSelected = selectedPages
     ? Object.values(selectedPages).reduce((sum, arr) => sum + arr.length, 0)
     : 0
@@ -96,90 +115,149 @@ export default function MergeModal({ onClose }) {
 
         {/* ── Body ── */}
         <div className="modal-section merge-section">
-          {loading ? (
-            <div className="merge-loading">
-              <span className="btn-spinner" />
-              <span>Reading PDF pages...</span>
-            </div>
+          <div className="merge-mode-tabs">
+            <button
+              className={`merge-mode-tab ${mode === 'standard' ? 'active' : ''}`}
+              onClick={() => setMode('standard')}
+            >
+              {t('bottomBar.mergeStandard')}
+            </button>
+            <button
+              className={`merge-mode-tab ${mode === 'layout' ? 'active' : ''}`}
+              onClick={() => setMode('layout')}
+            >
+              {t('bottomBar.mergeLayout')}
+            </button>
+          </div>
+
+          {mode === 'standard' ? (
+            loading ? (
+              <div className="merge-loading">
+                <span className="btn-spinner" />
+                <span>Reading PDF pages...</span>
+              </div>
+            ) : (
+              <div className="merge-table-wrap">
+                <table className="preview-table merge-table">
+                  <thead>
+                    <tr>
+                      <th className="merge-col-file">File Name</th>
+                      <th className="merge-col-pages">Pages</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pdfEntries.map(entry => {
+                      const info = pageInfo?.[entry.uid]
+                      if (!info) return null
+                      const pages = selectedPages?.[entry.uid] || []
+                      const allSelected = pages.length === info.pageCount
+                      return (
+                        <tr key={entry.uid}>
+                          <td className="merge-col-file">
+                            <span className="merge-filename" title={info.fileName}>
+                              {info.fileName}
+                            </span>
+                            {info.error && <span className="merge-error">Read error</span>}
+                          </td>
+                          <td className="merge-col-pages">
+                            <button
+                              className="merge-toggle-all"
+                              onClick={() => toggleAll(entry.uid)}
+                              title={allSelected ? 'Deselect all' : 'Select all'}
+                            >
+                              {allSelected ? <CheckSquare size="14" /> : <Square size="14" />}
+                              <span>{info.pageCount} pages</span>
+                            </button>
+                            <div className="merge-page-checks">
+                              {Array.from({ length: info.pageCount }, (_, i) => (
+                                <label key={i} className={`merge-page-label ${pages.includes(i) ? 'checked' : ''}`}>
+                                  <input
+                                    type="checkbox"
+                                    checked={pages.includes(i)}
+                                    onChange={() => togglePage(entry.uid, i)}
+                                  />
+                                  <span>{i + 1}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )
           ) : (
-            <div className="merge-table-wrap">
-              <table className="preview-table merge-table">
-                <thead>
-                  <tr>
-                    <th className="merge-col-file">File Name</th>
-                    <th className="merge-col-pages">Pages</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pdfEntries.map(entry => {
-                    const info = pageInfo?.[entry.uid]
-                    if (!info) return null
-                    const pages = selectedPages?.[entry.uid] || []
-                    const allSelected = pages.length === info.pageCount
-                    return (
-                      <tr key={entry.uid}>
-                        <td className="merge-col-file">
-                          <span className="merge-filename" title={info.fileName}>
-                            {info.fileName}
-                          </span>
-                          {info.error && <span className="merge-error">Read error</span>}
-                        </td>
-                        <td className="merge-col-pages">
-                          <button
-                            className="merge-toggle-all"
-                            onClick={() => toggleAll(entry.uid)}
-                            title={allSelected ? 'Deselect all' : 'Select all'}
-                          >
-                            {allSelected ? <CheckSquare size="14" /> : <Square size="14" />}
-                            <span>{info.pageCount} pages</span>
-                          </button>
-                          <div className="merge-page-checks">
-                            {Array.from({ length: info.pageCount }, (_, i) => (
-                              <label key={i} className={`merge-page-label ${pages.includes(i) ? 'checked' : ''}`}>
-                                <input
-                                  type="checkbox"
-                                  checked={pages.includes(i)}
-                                  onChange={() => togglePage(entry.uid, i)}
-                                />
-                                <span>{i + 1}</span>
-                              </label>
-                            ))}
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+            <div className="layout-wrap">
+              <div className="layout-grid">
+                {LAYOUT_PRESETS.map(p => (
+                  <button
+                    key={p.id}
+                    className={`layout-option ${layoutId === p.id ? 'active' : ''}`}
+                    onClick={() => setLayoutId(p.id)}
+                  >
+                    {p.label}
+                    <small>{p.cols * p.rows} {t('bottomBar.layoutPerPage')}</small>
+                  </button>
+                ))}
+              </div>
+              <p className="layout-hint">{t('bottomBar.layoutHint')}</p>
             </div>
           )}
         </div>
 
         {/* ── Footer ── */}
         <div className="modal-footer">
-          <span className="merge-summary">
-            {totalSelected} page{totalSelected !== 1 ? 's' : ''} selected from {pdfEntries.length} file{pdfEntries.length !== 1 ? 's' : ''}
-          </span>
+          {mode === 'standard' ? (
+            <span className="merge-summary">
+              {totalSelected} page{totalSelected !== 1 ? 's' : ''} selected from {pdfEntries.length} file{pdfEntries.length !== 1 ? 's' : ''}
+            </span>
+          ) : (
+            <span className="merge-summary">
+              {pdfEntries.length} file{pdfEntries.length !== 1 ? 's' : ''} → {layoutPageCount} A4 page{layoutPageCount !== 1 ? 's' : ''}
+            </span>
+          )}
           <button className="btn-cancel" onClick={onClose}>
             {t('rename.cancel')}
           </button>
-          <button
-            className="btn-apply"
-            onClick={handleMerge}
-            disabled={loading || merging || totalSelected === 0}
-          >
-            {merging ? (
-              <>
-                <span className="btn-spinner" />
-                Merging...
-              </>
-            ) : (
-              <>
-                <FileUp size="16" />
-                Merge Selected
-              </>
-            )}
-          </button>
+          {mode === 'standard' ? (
+            <button
+              className="btn-apply"
+              onClick={handleMerge}
+              disabled={loading || merging || totalSelected === 0}
+            >
+              {merging ? (
+                <>
+                  <span className="btn-spinner" />
+                  Merging...
+                </>
+              ) : (
+                <>
+                  <FileUp size="16" />
+                  Merge Selected
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              className="btn-apply"
+              onClick={handleLayoutMerge}
+              disabled={merging || pdfEntries.length === 0}
+            >
+              {merging ? (
+                <>
+                  <span className="btn-spinner" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <FileUp size="16" />
+                  {t('bottomBar.layoutGenerate')}
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {/* ── Styles ── */}
@@ -205,6 +283,16 @@ export default function MergeModal({ onClose }) {
           .merge-page-label.checked { background: var(--primary-light); border-color: var(--primary); color: var(--primary); font-weight: 600; }
           .merge-page-label input { display: none; }
           .merge-summary { font-size: 12px; color: var(--text-secondary); margin-right: auto; }
+          .merge-mode-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+          .merge-mode-tab { padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); color: var(--text-secondary); font-size: 12px; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); }
+          .merge-mode-tab.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+          .layout-wrap { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+          .layout-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+          .layout-option { padding: 14px 8px; border: 2px solid var(--border); border-radius: 10px; background: var(--card-bg); text-align: center; cursor: pointer; transition: all var(--transition-fast); font-size: 13px; font-weight: 700; color: var(--text-secondary); }
+          .layout-option:hover { border-color: var(--primary); color: var(--primary); }
+          .layout-option.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+          .layout-option small { display: block; margin-top: 4px; font-size: 10px; font-weight: 500; color: var(--text-muted); }
+          .layout-hint { font-size: 11px; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
           .btn-spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: btnSpin 0.6s linear infinite; display: inline-block; }
           @keyframes btnSpin { to { transform: rotate(360deg); } }
         `}</style>
