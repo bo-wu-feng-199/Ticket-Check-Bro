@@ -7,21 +7,16 @@
   "header.darkMode": "暗色",
   "header.lightMode": "亮色",
   "header.lang": "EN",
-
   "dropzone.primary": "将文件拖拽至此区域",
   "dropzone.secondary": "或点击浏览 — 支持 PDF、JPG、JPEG、PNG",
   "dropzone.badge": "纯浏览器端运行",
-
   "filePanel.title": "文档列表",
-
   "fileActions.moveUp": "上移",
   "fileActions.moveDown": "下移",
   "fileActions.remove": "删除选中",
   "fileActions.clearAll": "清空全部",
-
   "fileList.empty": "暂无文档",
   "fileList.hint": "拖拽或点击上方区域添加文件",
-
   "detailPanel.selectPrompt": "选择一个文档查看详情",
   "detailPanel.chooseType": "自动识别不确定，请选择文档类型：",
   "typeSelector.placeholder": "选择类型...",
@@ -33,20 +28,17 @@
   "typeSelector.fixed_amount": "定额发票",
   "typeSelector.toll_invoice": "过路费发票",
   "typeSelector.english_invoice": "英文发票",
-
   "invoiceCard.title": "提取字段",
   "invoiceCard.hint": "点击值进行编辑",
   "invoiceCard.empty": "该文档未提取到结构化字段",
   "invoiceCard.editPrompt": "编辑值：",
   "invoiceCard.confidence": "置信度",
-
   "preview.title": "预览",
   "preview.processing": "处理中...",
   "preview.rendering": "渲染PDF...",
   "preview.extracting": "提取内容...",
   "preview.page1": "文档第 1 页",
   "preview.unavailable": "预览不可用",
-
   "stats.parsed": "已解析",
   "stats.pending": "处理中",
   "stats.failed": "失败",
@@ -54,7 +46,6 @@
   "stats.total": "合计",
   "stats.files": "个文件",
   "stats.amount": "总金额",
-
   "bottomBar.parsed": "已解析",
   "bottomBar.files": "个文件",
   "bottomBar.ready": "可导出",
@@ -69,7 +60,6 @@
   "bottomBar.layoutPrintPrompt": "PDF 已生成，立即打印？",
   "bottomBar.rename": "批量重命名",
   "bottomBar.export": "导出 Excel",
-
   "rename.title": "批量重命名",
   "rename.template": "命名模板",
   "rename.hint": "使用 {fieldKey} 占位符。点击下方变量按钮插入。",
@@ -85,7 +75,6 @@
   "rename.cancel": "取消",
   "rename.success": "已下载",
   "rename.downloadSuccess": "个文件",
-
   "footer.version": "v1.5.0",
   "footer.tech": "技术栈",
   "footer.license": "MIT 许可证",
@@ -95,10 +84,11 @@
   "footer.aboutFree": "免费使用",
   "footer.aboutPrivate": "100% 隐私",
   "footer.aboutFast": "无需安装",
-
   "error.mergeFail": "需要至少 2 个 PDF 文件才能合并。当前仅",
   "error.fileNotFound": "文件未找到：",
-
   "app.noDocument": "没有选择文档",
-  "app.dropHint": "将文件拖拽到上方区域，然后点击列表中的条目查看解析结果。"
+  "app.dropHint": "将文件拖拽到上方区域，然后点击列表中的条目查看解析结果。",
+  "bottomBar.tpl_full": "全部字段",
+  "bottomBar.tpl_reconciliation": "财务对账",
+  "bottomBar.tpl_travel": "差旅报销"
 }

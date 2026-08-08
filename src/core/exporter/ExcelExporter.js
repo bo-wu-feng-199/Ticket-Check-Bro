@@ -10,6 +10,7 @@
 import * as XLSX from 'xlsx'
 import { getFieldSchema, DOCUMENT_TYPES } from '../../data/schemas.js'
 import { detectDuplicates } from '../deduplicator.js'
+import { TEMPLATE_FULL } from './excelTemplates.js'
 
 /**
  * Export parsed invoice data to a .xlsx file and trigger download.
@@ -17,8 +18,11 @@ import { detectDuplicates } from '../deduplicator.js'
  * @param {Array} entries - File entries array from store
  * @param {Object} results - Parsed results keyed by uid
  * @param {string} [filename='ticket-check-bro-export.xlsx']
+ * @param {Object} [template=TEMPLATE_FULL] - Excel template (see excelTemplates.js).
+ *   template.columns === null → include all schema fields.
+ *   Otherwise only the listed columns are emitted, in template order.
  */
-export function exportToExcel(entries, results, filename = 'ticket-check-bro-export.xlsx') {
+export function exportToExcel(entries, results, filename = 'ticket-check-bro-export.xlsx', template = TEMPLATE_FULL) {
   // Filter to only parsed entries
   const parsed = entries.filter(e => e.status === 'parsed' && results[e.uid])
 
@@ -29,6 +33,14 @@ export function exportToExcel(entries, results, filename = 'ticket-check-bro-exp
 
   // Detect duplicates to highlight in yellow
   const { duplicates: duplicateUids } = detectDuplicates(results)
+
+  // Determine output columns
+  // template.columns === null → all schema fields (legacy full export)
+  const useTemplate = Array.isArray(template?.columns) && template.columns.length > 0
+  const templateKeys = useTemplate ? template.columns.map(c => c.key) : null
+  const templateLabelOf = useTemplate
+    ? new Map(template.columns.map(c => [c.key, c.label]))
+    : null
 
   // Build rows for the spreadsheet
   const rows = parsed.map(entry => {
@@ -43,11 +55,23 @@ export function exportToExcel(entries, results, filename = 'ticket-check-bro-exp
       'Confidence': `${Math.round(result.confidence * 100)}%`
     }
 
-    // Add schema fields
+    if (useTemplate) {
+      // Template mode: only template columns, with template labels
+      template.columns.forEach(col => {
+        const label = col.label
+        if (col.key === 'fileName') { row[label] = entry.fileName; return }
+        if (col.key === 'documentType') { row[label] = typeLabel; return }
+        if (col.key === 'confidence') { row[label] = row['Confidence']; return }
+        const fv = fields[col.key]
+        row[label] = fv ? (fv.numeric !== undefined ? fv.numeric : String(fv.value)) : ''
+      })
+      return row
+    }
+
+    // Full mode: legacy behavior — File Name / Type / Confidence + all schema fields
     for (const field of schema) {
       const fv = fields[field.key]
       if (fv) {
-        // Use numeric value for currency fields so Excel treats them as numbers
         row[field.label] = fv.numeric !== undefined ? fv.numeric : String(fv.value)
       } else {
         row[field.label] = ''

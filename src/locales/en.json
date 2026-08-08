@@ -7,21 +7,16 @@
   "header.darkMode": "Dark",
   "header.lightMode": "Light",
   "header.lang": "中",
-
   "dropzone.primary": "Drop your documents here",
   "dropzone.secondary": "or click to browse — PDF, JPG, JPEG, PNG",
   "dropzone.badge": "100% client-side",
-
   "filePanel.title": "Documents",
-
   "fileActions.moveUp": "Move up",
   "fileActions.moveDown": "Move down",
   "fileActions.remove": "Remove selected",
   "fileActions.clearAll": "Clear all",
-
   "fileList.empty": "No documents added yet",
   "fileList.hint": "Drag & drop or click the area above",
-
   "detailPanel.selectPrompt": "Select a document to inspect",
   "detailPanel.chooseType": "Auto-detection was uncertain. Select the correct document type:",
   "typeSelector.placeholder": "Choose type...",
@@ -33,20 +28,17 @@
   "typeSelector.fixed_amount": "Fixed-Amount Receipt",
   "typeSelector.toll_invoice": "Toll Invoice",
   "typeSelector.english_invoice": "English Invoice",
-
   "invoiceCard.title": "Extracted Fields",
   "invoiceCard.hint": "Click a value to edit",
   "invoiceCard.empty": "No structured fields extracted for this document.",
   "invoiceCard.editPrompt": "Edit value:",
   "invoiceCard.confidence": "Confidence",
-
   "preview.title": "Preview",
   "preview.processing": "Processing...",
   "preview.rendering": "Rendering PDF...",
   "preview.extracting": "Extracting content...",
   "preview.page1": "Page 1 of document",
   "preview.unavailable": "Preview unavailable",
-
   "stats.parsed": "parsed",
   "stats.pending": "processing",
   "stats.failed": "failed",
@@ -54,7 +46,6 @@
   "stats.total": "Total",
   "stats.files": "",
   "stats.amount": "Total",
-
   "bottomBar.parsed": "parsed",
   "bottomBar.files": "",
   "bottomBar.ready": "Ready for export",
@@ -69,7 +60,6 @@
   "bottomBar.layoutPrintPrompt": "PDF generated. Print it now?",
   "bottomBar.rename": "Batch Rename",
   "bottomBar.export": "Export to Excel",
-
   "rename.title": "Batch Rename Documents",
   "rename.template": "Naming Template",
   "rename.hint": "Use {fieldKey} placeholders. Click a chip below to insert.",
@@ -85,7 +75,6 @@
   "rename.cancel": "Cancel",
   "rename.success": "Downloaded",
   "rename.downloadSuccess": " files",
-
   "footer.version": "v1.5.0",
   "footer.tech": "Built with",
   "footer.license": "MIT License",
@@ -95,10 +84,11 @@
   "footer.aboutFree": "Free to use",
   "footer.aboutPrivate": "100% private",
   "footer.aboutFast": "No installation",
-
   "error.mergeFail": "Need at least 2 PDFs to merge. Found only",
   "error.fileNotFound": "File not found:",
-
   "app.noDocument": "No document selected",
-  "app.dropHint": "Drop your files in the area above, then click any entry in the list to inspect its parsed fields."
+  "app.dropHint": "Drop your files in the area above, then click any entry in the list to inspect its parsed fields.",
+  "bottomBar.tpl_full": "All Fields",
+  "bottomBar.tpl_reconciliation": "Reconciliation",
+  "bottomBar.tpl_travel": "Travel Reimbursement"
 }

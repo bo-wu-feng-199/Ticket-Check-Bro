@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useInvoiceStore } from '../store/invoiceStore.js'
 import { exportToExcel } from '../core/exporter/ExcelExporter.js'
+import { EXCEL_TEMPLATES, getTemplateById } from '../core/exporter/excelTemplates.js'
 import { exportToCsv } from '../core/exporter/CsvExporter.js'
 import { exportToJson } from '../core/exporter/JsonExporter.js'
 import { Download, FileUp, Tag, CheckCircle2, Camera, Share2 } from 'lucide-react'
@@ -49,6 +50,12 @@ export default function BottomBar() {
     const name = window.prompt(t('bottomBar.exportPrompt'), 'ticket-check-bro-export')
     if (name === null) return
     exportToExcel(entries, results, name + '.xlsx')
+  }
+
+  const handleTemplateExport = (templateId) => {
+    const template = getTemplateById(templateId)
+    const slug = template.id === 'full' ? 'ticket-check-bro-export' : `ticket-check-bro-${template.id}`
+    exportToExcel(entries, results, `${slug}.xlsx`, template)
   }
 
   const handleMerge = () => {
@@ -134,9 +141,25 @@ export default function BottomBar() {
           </button>
           {showExportMenu && (
             <div className="share-menu-dropdown">
-              <div className="share-menu-item" onClick={() => { exportToExcel(entries, results); setShowExportMenu(false) }}>
+              <div className="share-menu-item share-menu-title">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 Excel (.xlsx)
+                <span className="share-menu-arrow">▸</span>
+              </div>
+              <div className="share-menu-submenu">
+                {EXCEL_TEMPLATES.map(tpl => (
+                  <div
+                    key={tpl.id}
+                    className="share-menu-item"
+                    onClick={() => {
+                      handleTemplateExport(tpl.id)
+                      setShowExportMenu(false)
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    {t(`bottomBar.tpl_${tpl.id}`)}
+                  </div>
+                ))}
               </div>
               <div className="share-menu-item" onClick={() => { exportToCsv(entries, results); setShowExportMenu(false) }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -211,6 +234,51 @@ export default function BottomBar() {
         .bottom-bar-ready { color: var(--success); font-weight: 500; }
         .bottom-bar-actions { display: flex; gap: 8px; }
         .export-menu-wrap { position: relative; }
+        .share-menu-wrap { position: relative; }
+
+        .share-menu-dropdown {
+          position: absolute;
+          right: 0;
+          top: calc(100% + 6px);
+          min-width: 190px;
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-sm);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.14);
+          padding: 5px;
+          z-index: 100;
+          display: flex;
+          flex-direction: column;
+        }
+        .share-menu-item {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          padding: 9px 12px;
+          border-radius: 7px;
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: pointer;
+          transition: background var(--transition-fast);
+          white-space: nowrap;
+        }
+        .share-menu-item:hover { background: var(--bg-alt); }
+        .share-menu-title {
+          color: var(--text-muted);
+          font-weight: 600;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.4px;
+          cursor: default;
+        }
+        .share-menu-title:hover { background: transparent; }
+        .share-menu-title .share-menu-arrow { margin-left: auto; font-size: 10px; }
+        .share-menu-submenu {
+          border-top: 1px solid var(--border);
+          margin-top: 2px;
+          padding-top: 5px;
+        }
 
         .btn-export,
         .btn-merge,
