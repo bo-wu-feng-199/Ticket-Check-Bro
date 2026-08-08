@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.5.0 (2026-08-01)
+
+- **Layout merge (排版合并)**: arrange multiple invoice PDFs in a grid (1×1 to 4×4) on A4 pages, vector content preserved
+- **Print after merge**: one-click print of generated layout PDF via system dialog
+- **Duplicate highlight in Excel**: duplicate invoice rows auto-highlighted in yellow on export
+- **Plugin parser registry**: `parserFactory.register()` / `unregister()` for third-party parsers
+- **Core package**: extracted `@ticket-check-bro/core` — parsers, schemas, format helpers as standalone npm package
+- **Test infrastructure**: Vitest + 30 tests (parser regression, edge cases, format helpers, registry)
+- **CI**: GitHub Actions (test + build on push/PR), Dependabot, branch protection on main
+- **Docs**: PRIVACY.md threat model, SECURITY.md, packages/core/README.md API guide, CHANGELOG
+
 ## v1.4.1 (2026-07-16)
 
 - **Export menu**: Excel / CSV / JSON multi-format dropdown
