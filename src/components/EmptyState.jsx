@@ -88,12 +88,14 @@ export default function EmptyState() {
 
       <style>{`
         .empty-landing {
+          width: 100%;
           max-width: 760px;
           margin: 0 auto;
           padding: 28px 24px 40px;
           display: flex;
           flex-direction: column;
           gap: 34px;
+          min-height: 0;
         }
         .empty-hero { text-align: center; }
         .empty-hero-title {
