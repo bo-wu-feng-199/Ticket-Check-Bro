@@ -20,7 +20,9 @@
     "type": "git",
     "url": "https://github.com/bo-wu-feng-199/Ticket-Check-Bro.git"
   },
-  "workspaces": ["packages/core"],
+  "workspaces": [
+    "packages/core"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -48,7 +50,6 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "vite": "^5.4.14",
-    "vite-plugin-prerender": "^1.0.8",
     "vitest": "^4.1.10"
   }
 }

@@ -4,9 +4,6 @@ import './i18n.js'
 import App from './App.jsx'
 import './index.css'
 
-// Signal pre-renderer that DOM is ready
-document.dispatchEvent(new Event('prerender-ready'))
-
 // Register service worker for PWA offline support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
