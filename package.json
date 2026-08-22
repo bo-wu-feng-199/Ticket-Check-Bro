@@ -49,7 +49,7 @@
     "react-i18next": "^17.0.8",
     "tesseract.js": "^5.1.1",
     "xlsx": "^0.18.5",
-    "zustand": "^4.5.5"
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
