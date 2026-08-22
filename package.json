@@ -29,6 +29,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx}\" \"*.{json,md,cjs}\"",
+    "evolve": "node scripts/evolve.mjs",
     "build:core": "cd packages/core && echo 'No build step needed — package is pure ESM'"
   },
   "dependencies": {

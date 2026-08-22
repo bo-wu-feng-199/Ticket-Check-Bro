@@ -1,0 +1,52 @@
+name: evolve
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  evolve:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (produce dist for health check)
+        run: npm run build
+
+      - name: Run evolution engine
+        env:
+          BUILD_OK: '1'
+        run: node scripts/evolve.mjs
+
+      - name: Upload evolution log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evolution-log
+          path: |
+            docs/evolution-log.md
+            docs/.evolution-state.json
+          if-no-files-found: ignore
+
+      - name: Commit evolution artifacts
+        if: success()
+        run: |
+          git config user.name "evolution-bot"
+          git config user.email "bot@ticket-check-bro.local"
+          git add docs/evolution-log.md docs/.evolution-state.json
+          git diff --cached --quiet || git commit -m "chore: evolution log update [skip ci]"
+          git push || echo "push skipped (concurrent update)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
