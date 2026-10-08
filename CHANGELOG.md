@@ -1,13 +1,25 @@
 # Changelog
 
-## v1.5.0 (2026-08-01)
+## Unreleased
+
+- **Self-evolution engine**: `scripts/evolve.mjs` + `EVOLUTION.md` + `evolve.yml` — health scoring (0-100), evolution timeline, improvement suggestions, regression gate
+- **Excel export templates**: 3 presets (All Fields / Reconciliation / Travel)
+- **Landing-style empty state**: hero, stats (8 types / 35 tests / 0 uploads / 7 layouts), 4-step flow, 3 scenarios
+- **Service Worker cache fix**: network-first for HTML, `no-store` for `sw.js` (fixes stale-cache blank page)
+- **Prerender dead code removed**: dropped unused `vite-plugin-prerender` dependency
+- **Tooling**: ESLint + Prettier config (`.eslintrc.cjs`, `.prettierrc`, `.editorconfig`), npm scripts `lint` / `lint:fix` / `format` / `evolve` / `start`
+- **Docs**: `PROJECT_GUIDE.md` full project guide, `PROJECT_AUDIT_REPORT.md`, `docs/tech-stack-inventory.md`
+- **Fix**: parser plugin count in evolution engine (was undercounting `*InvoiceParser.js` subclasses)
+- **Fix**: scroll in empty state when content exceeds viewport
+
+## v1.5.0 (2026-08-08)
 
 - **Layout merge (排版合并)**: arrange multiple invoice PDFs in a grid (1×1 to 4×4) on A4 pages, vector content preserved
 - **Print after merge**: one-click print of generated layout PDF via system dialog
 - **Duplicate highlight in Excel**: duplicate invoice rows auto-highlighted in yellow on export
 - **Plugin parser registry**: `parserFactory.register()` / `unregister()` for third-party parsers
 - **Core package**: extracted `@ticket-check-bro/core` — parsers, schemas, format helpers as standalone npm package
-- **Test infrastructure**: Vitest + 30 tests (parser regression, edge cases, format helpers, registry)
+- **Test infrastructure**: Vitest + 35 tests (parser regression, edge cases, format helpers, registry, Excel templates, layout merger)
 - **CI**: GitHub Actions (test + build on push/PR), Dependabot, branch protection on main
 - **Docs**: PRIVACY.md threat model, SECURITY.md, packages/core/README.md API guide, CHANGELOG
 

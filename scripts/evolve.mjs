@@ -8,7 +8,7 @@
  */
 import { execSync } from 'node:child_process'
 import { readFileSync, writeFileSync, existsSync, statSync, readdirSync } from 'node:fs'
-import { join, dirname } from 'node:path'
+import { join, dirname, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -103,17 +103,29 @@ try {
 
 // ---------- 3. 结构指标 ----------
 const srcFiles = walk(join(root, 'src'), ['.js', '.jsx'])
-const parserFiles = walk(join(root, 'packages', 'core', 'src', 'parser'), ['.js']).filter(
-  (f) => !f.endsWith('index.js') && !f.endsWith('InvoiceParser.js'),
-)
+const parserFiles = walk(join(root, 'packages', 'core', 'src', 'parser'), ['.js']).filter((f) => {
+  // 精确排除目录索引与抽象基类，避免误伤 *InvoiceParser.js 子类
+  const b = basename(f)
+  return b !== 'index.js' && b !== 'InvoiceParser.js'
+})
 const parserPluginCount = parserFiles.length
 const distSizeMB = existsSync(join(root, 'dist')) ? dirSize(join(root, 'dist')) : 0
 const buildOk = process.env.BUILD_OK === '1' || existsSync(join(root, 'dist', 'index.html'))
 const commitHash = (() => {
+  // 优先纯文件读取（绕开 Windows 下 cmd.exe 被沙箱拦截导致的 EBUSY）
   try {
-    return execSync('git rev-parse --short HEAD', { cwd: root, encoding: 'utf8' }).trim()
+    const head = readFileSync(join(root, '.git', 'HEAD'), 'utf8').trim()
+    if (head.startsWith('ref: ')) {
+      const refFile = join(root, '.git', ...head.slice(5).trim().split('/'))
+      return readFileSync(refFile, 'utf8').trim().slice(0, 7)
+    }
+    return head.slice(0, 7)
   } catch {
-    return 'unknown'
+    try {
+      return execSync('git rev-parse --short HEAD', { cwd: root, encoding: 'utf8' }).trim()
+    } catch {
+      return 'unknown'
+    }
   }
 })()
 

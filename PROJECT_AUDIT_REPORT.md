@@ -2,26 +2,29 @@
 
 生成时间：2026-08-22
 版本：v1.5.0
+数据复核：2026-10-08（parser 计数、票据类型数已修正，见下）
+
+> **数据勘误（2026-10-08）**：本报告正文所写"7 类票据解析器"为错误表述，实际为 **8 种**（增值税/火车/机票/机动车/出租车/定额/通行费/英文发票）。该错误与 `scripts/evolve.mjs` 中 parser 计数少算同源，已于 2026-10-08 一并修复（过滤条件由 `endsWith('InvoiceParser.js')` 改为精确匹配基类文件名）。
 
 ## 一、整体状态（体检结论）
 
 | 项目 | 状态 | 说明 |
 |------|------|------|
-| 构建 | ✅ 通过 | `npm run build` 成功，dist 3.1M，chunk 拆分合理 |
+| 构建 | ✅ 通过 | `npm run build` 成功，dist 3.03M，chunk 拆分合理 |
 | 测试 | ✅ 通过 | `vitest` 35/35 全绿 |
 | CI | ✅ 存在 | `.github/workflows/ci.yml` + 分支保护 |
 | core workspace | ✅ 正常 | `node_modules/@ticket-check-bro/core` 软链到 `packages/core` |
-| 部署 | ⚠️ 待推送 | 本地领先 origin/main 16 commits 未推送 |
+| 部署 | ✅ 已推送 | 本地与 origin/main 同步（9276701） |
 
 **结论：项目可构建、可运行，无阻断性错误。**
 
 ## 二、主要组成部分
 
 - **应用层 `src/`**：React 18 + Zustand，15 个组件（Header/DropZone/FileList/DetailPanel/PreviewPanel/MergeModal 等），UI 完整。
-- **解析引擎 `src/core/parser/`**：7 类票据解析器 + common 通用解析；插件注册表 `parserFactory` 已抽出到 core 包。
+- **解析引擎 `src/core/parser/`**：**8 种**票据解析器；插件注册表 `parserFactory` 已抽出到 core 包。
 - **导出层 `src/core/exporter/`**：CSV/Excel/JSON 导出、PDF 合并、排版合并、3 套 Excel 模板。
 - **核心包 `packages/core/`**：`@ticket-check-bro/core`（parser + schemas + formatHelper），npm workspaces 单源。
-- **文档**：README/CHANGELOG/PRIVACY/SECURITY/CONTRIBUTING + `docs/` 5 份。
+- **文档**：README/CHANGELOG/PRIVACY/SECURITY/CONTRIBUTING + `docs/` 6 份。
 
 ## 三、初次误判的澄清（重要）
 
